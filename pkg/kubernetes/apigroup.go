@@ -17,17 +17,13 @@ func (o APIGroup) String() string {
 
 // Replaces returns true if 'o' group is replaced by 'p' group
 func (o APIGroup) Replaces(p APIGroup) bool {
-	// * replaces apiextensions
-	if o.String() != "apiextensions.k8s.io" && p.String() == "apiextensions.k8s.io" {
-		return true
-	}
 	// * replaces extensions
 	if o.String() != "extensions" && p.String() == "extensions" {
 		return true
 	}
 
 	// core replaces events
-	if o.String() == "" && p.String() == "events" {
+	if o.String() == "" && p.String() == "events.k8s.io" {
 		return true
 	}
 

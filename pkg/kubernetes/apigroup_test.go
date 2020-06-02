@@ -31,8 +31,8 @@ func Test_APIGroupReplaces(t *testing.T) {
 		Group2   kubernetes.APIGroup
 		Expected bool
 	}{
-		{"policy", "extensions", true},
-		{"admissionregistration.k8s.io", "apiextensions.k8s.io", true},
+		{"etworking", "extensions", true},
+		{"", "events.k8s.io", true},
 	}
 
 	for _, test := range tests {

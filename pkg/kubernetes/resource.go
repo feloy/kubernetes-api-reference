@@ -1,6 +1,7 @@
 package kubernetes
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/go-openapi/spec"
@@ -16,9 +17,17 @@ type Resource struct {
 	Definition *spec.Schema
 }
 
-// LessThan returns true if 'o' is an older version than 'p'
+// LessThan returns true if 'o' is a newer version than 'p'
 func (o *Resource) LessThan(p *Resource) bool {
 	return o.Group.Replaces(p.Group) || p.Version.LessThan(&o.Version)
+}
+
+// GetGV returns the group/version of a resource (used for apiVersion:)
+func (o *Resource) GetGV() string {
+	if o.Group == "" {
+		return o.Version.String()
+	}
+	return fmt.Sprintf("%s/%s", o.Group, o.Version.String())
 }
 
 // ResourceList is the list of resources for a given Kind
