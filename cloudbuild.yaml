@@ -1,0 +1,11 @@
+steps:
+- id: build
+  name: gcr.io/cloud-builders/docker
+  args:
+  - build
+  - -t
+  - eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
+  - .
+
+images:
+- eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
