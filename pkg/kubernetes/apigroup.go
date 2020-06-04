@@ -28,5 +28,4 @@ func (o APIGroup) Replaces(p APIGroup) bool {
 	}
 
 	return false
-	// TODO
 }

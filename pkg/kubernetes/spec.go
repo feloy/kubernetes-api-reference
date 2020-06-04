@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/feloy/kubernetes-api-reference/pkg/openapi"
 	"github.com/go-openapi/spec"
@@ -16,6 +17,25 @@ type Spec struct {
 	// Resources is the list of K8s resources
 	// populated by calling getResources
 	Resources *ResourceMap
+
+	GVToKey GVToKeyMap
+}
+
+// GVToKeyMap maps Kubernetes resource Group/Version with Spec Definition key (without Kind)
+// e.g. GVToKey["v1"]: "io.k8s.api.core.v1"
+type GVToKeyMap map[string]string
+
+// Add adds a new match between key and resource GV
+func (o GVToKeyMap) Add(key string, resource *Resource) {
+	parts := strings.Split(key, ".")
+	if len(parts) == 0 {
+		return
+	}
+	subkey := strings.Join(parts[0:len(parts)-1], ".")
+	gv := resource.GetGV()
+	if _, found := o[gv]; !found {
+		o[gv] = subkey
+	}
 }
 
 // NewSpec creates a new Spec from a K8s spec file
@@ -40,8 +60,10 @@ func (o *Spec) getSwagger(filename string) error {
 }
 
 // GetResources populates the resources defined in the spec
+// and maps definitions keys to Resources GVs
 func (o *Spec) getResources() error {
 	o.Resources = &ResourceMap{}
+	o.GVToKey = GVToKeyMap{}
 
 	for key, definition := range o.Swagger.Definitions {
 		extensions := definition.Extensions
@@ -85,13 +107,41 @@ func (o *Spec) getResources() error {
 			return fmt.Errorf("%s: Error getting GVK apikind", key)
 		}
 
-		o.Resources.Add(&Resource{
+		resource := &Resource{
 			Key:        key,
 			Group:      APIGroup(group),
 			Version:    *apiversion,
 			Kind:       APIKind(kind),
-			Definition: &definition,
-		})
+			Definition: definition,
+		}
+		o.Resources.Add(resource)
+		o.GVToKey.Add(key, resource)
 	}
+	return nil
+}
+
+// GetResource returns the resource referenced by group/version/kind, or nil if not found
+func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind) *spec.Schema {
+	// Search on K8s resources
+	for k, resources := range *o.Resources {
+		if k == kind {
+			for _, resource := range resources {
+				if resource.Equals(group, version, kind) {
+					return &resource.Definition
+				}
+			}
+		}
+	}
+
+	// Get on definitions
+	gvRes := Resource{
+		Group:   group,
+		Version: version,
+	}
+	gvk := o.GVToKey[gvRes.GetGV()] + "." + kind.String()
+	if def, found := o.Swagger.Definitions[gvk]; found {
+		return &def
+	}
+
 	return nil
 }

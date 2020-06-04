@@ -106,3 +106,18 @@ func (o *APIVersion) LessThan(p *APIVersion) bool {
 func (o *APIVersion) Replaces(p *APIVersion) bool {
 	return o.Version == p.Version && p.LessThan(o)
 }
+
+// UnmarshalYAML helps unmarshal APIVersion values from YAML
+func (o *APIVersion) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var str string
+	err := unmarshal(&str)
+	if err != nil {
+		return err
+	}
+	v, err := NewAPIVersion(str)
+	if err != nil {
+		return err
+	}
+	*o = *v
+	return nil
+}

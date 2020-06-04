@@ -14,12 +14,17 @@ type Resource struct {
 	Group      APIGroup
 	Version    APIVersion
 	Kind       APIKind
-	Definition *spec.Schema
+	Definition spec.Schema
 }
 
 // LessThan returns true if 'o' is a newer version than 'p'
 func (o *Resource) LessThan(p *Resource) bool {
 	return o.Group.Replaces(p.Group) || p.Version.LessThan(&o.Version)
+}
+
+// Equals returns true if a resource is referenced by group/version/kind
+func (o *Resource) Equals(group APIGroup, version APIVersion, kind APIKind) bool {
+	return o.Group == group && o.Version == version && o.Kind == kind
 }
 
 // GetGV returns the group/version of a resource (used for apiVersion:)

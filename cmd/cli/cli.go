@@ -30,6 +30,7 @@ func RootCmd() *cobra.Command {
 	cmd.MarkFlagRequired("file")
 
 	cmd.AddCommand(ResourceslistCmd())
+	cmd.AddCommand(ShowTOCCmd())
 
 	cobra.OnInitialize(initConfig)
 
