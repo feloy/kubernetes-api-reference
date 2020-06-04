@@ -23,12 +23,19 @@ func Test_PopulateAssociatesv118(t *testing.T) {
 		t.Errorf("Error loding swagger file")
 	}
 
+	if len(spec.Swagger.Definitions) != 600 {
+		t.Errorf("Spec should contain %d definition but contains %d", 600, len(spec.Swagger.Definitions))
+	}
+
 	toc, err := config.LoadTOC("../../config/v1.18/toc.yaml")
 	if err != nil {
 		t.Errorf("Error loding toc file")
 	}
 
-	toc.PopulateAssociates(spec)
+	err = toc.PopulateAssociates(spec)
+	if err != nil {
+		t.Errorf("%s", err)
+	}
 
 	l := len(toc.Parts[0].Chapters[0].Sections)
 	if l != 4 {

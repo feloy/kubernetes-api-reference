@@ -23,7 +23,7 @@ type Spec struct {
 
 // GVToKeyMap maps Kubernetes resource Group/Version with Spec Definition key (without Kind)
 // e.g. GVToKey["v1"]: "io.k8s.api.core.v1"
-type GVToKeyMap map[string]string
+type GVToKeyMap map[string][]string
 
 // Add adds a new match between key and resource GV
 func (o GVToKeyMap) Add(key string, resource *Resource) {
@@ -34,7 +34,17 @@ func (o GVToKeyMap) Add(key string, resource *Resource) {
 	subkey := strings.Join(parts[0:len(parts)-1], ".")
 	gv := resource.GetGV()
 	if _, found := o[gv]; !found {
-		o[gv] = subkey
+		o[gv] = []string{subkey}
+	} else {
+		found := false
+		for _, k := range o[gv] {
+			if k == subkey {
+				found = true
+			}
+		}
+		if !found {
+			o[gv] = append(o[gv], subkey)
+		}
 	}
 }
 
@@ -141,9 +151,12 @@ func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, mar
 		Group:   group,
 		Version: version,
 	}
-	gvk := o.GVToKey[gvRes.GetGV()] + "." + kind.String()
-	if def, found := o.Swagger.Definitions[gvk]; found {
-		return &def
+
+	for _, k := range o.GVToKey[gvRes.GetGV()] {
+		gvk := k + "." + kind.String()
+		if def, found := o.Swagger.Definitions[gvk]; found {
+			return &def
+		}
 	}
 
 	return nil

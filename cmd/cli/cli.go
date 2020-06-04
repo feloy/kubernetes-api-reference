@@ -31,6 +31,7 @@ func RootCmd() *cobra.Command {
 
 	cmd.AddCommand(ResourceslistCmd())
 	cmd.AddCommand(ShowTOCCmd())
+	cmd.AddCommand(GVKeysMap())
 
 	cobra.OnInitialize(initConfig)
 
