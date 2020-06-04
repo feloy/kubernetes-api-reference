@@ -6,6 +6,8 @@ ADD go.mod go.sum /app/
 RUN go mod download
 
 ADD api /app/api
+ADD config /app/config
+
 ADD pkg /app/pkg
 ADD cmd /app/cmd
 

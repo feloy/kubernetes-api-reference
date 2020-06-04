@@ -121,12 +121,15 @@ func (o *Spec) getResources() error {
 }
 
 // GetResource returns the resource referenced by group/version/kind, or nil if not found
-func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind) *spec.Schema {
+func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, markAsDocumented bool) *spec.Schema {
 	// Search on K8s resources
 	for k, resources := range *o.Resources {
 		if k == kind {
-			for _, resource := range resources {
+			for r, resource := range resources {
 				if resource.Equals(group, version, kind) {
+					if markAsDocumented {
+						(*o.Resources)[k][r].Documented = true
+					}
 					return &resource.Definition
 				}
 			}

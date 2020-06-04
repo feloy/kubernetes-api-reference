@@ -156,10 +156,10 @@ parts:
 - name: Policies
   chapters:
   - name: LimitRange
-    group: core
+    group: ""
     version: v1
   - name: ResourceQuota
-    group: core
+    group: ""
     version: v1
   - name: NetworkPolicy
     group: networking.k8s.io

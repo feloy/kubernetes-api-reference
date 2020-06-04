@@ -15,6 +15,11 @@ type Resource struct {
 	Version    APIVersion
 	Kind       APIKind
 	Definition spec.Schema
+
+	// Replaced indicates if this version is replaced by another one
+	ReplacedBy *string
+	// Documented indicates if this resource was included in the TOC
+	Documented bool
 }
 
 // LessThan returns true if 'o' is a newer version than 'p'
@@ -22,9 +27,14 @@ func (o *Resource) LessThan(p *Resource) bool {
 	return o.Group.Replaces(p.Group) || p.Version.LessThan(&o.Version)
 }
 
+// Replaces returns true if 'o' replaces 'p'
+func (o *Resource) Replaces(p *Resource) bool {
+	return o.Group.Replaces(p.Group) || o.Version.Replaces(&p.Version)
+}
+
 // Equals returns true if a resource is referenced by group/version/kind
 func (o *Resource) Equals(group APIGroup, version APIVersion, kind APIKind) bool {
-	return o.Group == group && o.Version == version && o.Kind == kind
+	return o.Group == group && o.Version.Equals(&version) && o.Kind == kind
 }
 
 // GetGV returns the group/version of a resource (used for apiVersion:)
@@ -49,6 +59,15 @@ type ResourceMap map[APIKind]ResourceList
 func (o *ResourceMap) Add(resource *Resource) {
 	list, ok := (*o)[resource.Kind]
 	if ok {
+		for _, otherResource := range list {
+			if resource.Replaces(otherResource) {
+				otherResource.ReplacedBy = &resource.Key
+				break
+			} else if otherResource.Replaces(resource) {
+				resource.ReplacedBy = &otherResource.Key
+				break
+			}
+		}
 		list = append(list, resource)
 	} else {
 		list = []*Resource{resource}

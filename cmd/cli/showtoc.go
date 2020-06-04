@@ -26,7 +26,13 @@ func ShowTOCCmd() *cobra.Command {
 
 			configDir := cmd.Flag("config-dir").Value.String()
 			toc, err := config.LoadTOC(path.Join(configDir, "toc.yaml"))
-			toc.PopulateAssociates(spec)
+			err = toc.PopulateAssociates(spec)
+			if err != nil {
+				return err
+			}
+
+			toc.AddOtherResources(spec)
+
 			toc.ToMarkdown(os.Stdout)
 			return nil
 		},

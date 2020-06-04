@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"sort"
 
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 	"github.com/go-openapi/spec"
@@ -70,7 +71,7 @@ func LoadTOC(filename string) (*TOC, error) {
 func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 	for _, part := range o.Parts {
 		for _, chapter := range part.Chapters {
-			main := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name))
+			main := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name), true)
 			if main != nil {
 				chapter.Sections = []*Section{
 					NewSection(chapter.Name, main),
@@ -79,23 +80,46 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
 			}
 
-			specResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Spec"))
+			specResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Spec"), true)
 			if specResource != nil {
 				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"Spec", specResource))
 			}
 
-			statusResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Status"))
+			statusResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Status"), true)
 			if statusResource != nil {
 				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"Status", statusResource))
 			}
 
-			listResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"List"))
+			listResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"List"), true)
 			if listResource != nil {
 				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"List", listResource))
 			}
 		}
 	}
 	return nil
+}
+
+// AddOtherResources adds not documented or replaced resources to a new Part
+func (o *TOC) AddOtherResources(spec *kubernetes.Spec) {
+	part := &Part{}
+	part.Name = "Other Resources"
+	part.Chapters = []*Chapter{}
+
+	for _, resource := range *spec.Resources {
+		for _, v := range resource {
+			if v.ReplacedBy != nil || v.Documented {
+			} else {
+				fmt.Printf("%s\n", v.Key)
+				part.Chapters = append(part.Chapters, &Chapter{Name: v.Kind.String()})
+			}
+		}
+	}
+	sort.Slice(part.Chapters, func(i, j int) bool {
+		return part.Chapters[i].Name < part.Chapters[j].Name
+	})
+	if len(part.Chapters) > 0 {
+		o.Parts = append(o.Parts, part)
+	}
 }
 
 // ToMarkdown writes in w a Markdown representation of the TOC
@@ -106,7 +130,7 @@ func (o *TOC) ToMarkdown(w io.Writer) {
 			fmt.Fprintf(w, "### %s\n", chapter.Name)
 			for _, section := range chapter.Sections {
 				fmt.Fprintf(w, "#### %s\n", section.Name)
-				fmt.Fprintf(w, "%s\n", section.Definition.Description)
+				//fmt.Fprintf(w, "%s\n", section.Definition.Description)
 			}
 		}
 	}

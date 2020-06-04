@@ -88,6 +88,11 @@ func (o *APIVersion) String() string {
 	return fmt.Sprintf("v%d%s%d", o.Version, stageName[o.Stage], *o.StageVersion)
 }
 
+// Equals returns true if 'o' and 'p' represent the same version
+func (o *APIVersion) Equals(p *APIVersion) bool {
+	return o.String() == p.String()
+}
+
 // LessThan returns true if 'o' version comes before 'p' version
 func (o *APIVersion) LessThan(p *APIVersion) bool {
 	if o.Version != p.Version {
