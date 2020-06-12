@@ -99,7 +99,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 	return nil
 }
 
-// AddOtherResources adds not documented or replaced resources to a new Part
+// AddOtherResources adds not documented and not replaced resources to a new Part
 func (o *TOC) AddOtherResources(spec *kubernetes.Spec) {
 	part := &Part{}
 	part.Name = "Other Resources"
@@ -107,10 +107,12 @@ func (o *TOC) AddOtherResources(spec *kubernetes.Spec) {
 
 	for _, resource := range *spec.Resources {
 		for _, v := range resource {
-			if v.ReplacedBy != nil || v.Documented {
-			} else {
-				fmt.Printf("%s\n", v.Key)
-				part.Chapters = append(part.Chapters, &Chapter{Name: v.Kind.String()})
+			if v.ReplacedBy == nil && !v.Documented {
+				part.Chapters = append(part.Chapters, &Chapter{
+					Name:    v.Kind.String(),
+					Group:   v.Group,
+					Version: v.Version,
+				})
 			}
 		}
 	}
@@ -122,7 +124,7 @@ func (o *TOC) AddOtherResources(spec *kubernetes.Spec) {
 	}
 }
 
-// ToMarkdown writes in w a Markdown representation of the TOC
+// ToMarkdown writes a Markdown representation of the TOC
 func (o *TOC) ToMarkdown(w io.Writer) {
 	for _, part := range o.Parts {
 		fmt.Fprintf(w, "\n## %s\n", part.Name)
@@ -130,8 +132,15 @@ func (o *TOC) ToMarkdown(w io.Writer) {
 			fmt.Fprintf(w, "### %s\n", chapter.Name)
 			for _, section := range chapter.Sections {
 				fmt.Fprintf(w, "#### %s\n", section.Name)
-				//fmt.Fprintf(w, "%s\n", section.Definition.Description)
 			}
 		}
 	}
+}
+
+// GetGV returns the group/version for a resource and version (used for apiVersion:)
+func GetGV(group kubernetes.APIGroup, version kubernetes.APIVersion) string {
+	if group == "" {
+		return version.String()
+	}
+	return fmt.Sprintf("%s/%s", group, version.String())
 }
