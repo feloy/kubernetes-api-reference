@@ -9,6 +9,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	fileOption      = "file"
+	configDirOption = "config-dir"
+	outputDirOption = "output-dir"
+)
+
 // RootCmd defines the root cli command
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -21,13 +27,12 @@ func RootCmd() *cobra.Command {
 			viper.BindPFlags(cmd.Flags())
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("go")
 			return nil
 		},
 	}
 
-	cmd.PersistentFlags().StringP("file", "f", "", "OpenAPI spec file")
-	cmd.MarkFlagRequired("file")
+	cmd.PersistentFlags().StringP(fileOption, "f", "", "OpenAPI spec file")
+	cmd.MarkFlagRequired(fileOption)
 
 	cmd.AddCommand(ResourceslistCmd())
 	cmd.AddCommand(ShowTOCCmd())

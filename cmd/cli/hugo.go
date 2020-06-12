@@ -17,13 +17,13 @@ func Hugo() *cobra.Command {
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			file := cmd.Flag("file").Value.String()
+			file := cmd.Flag(fileOption).Value.String()
 			spec, err := kubernetes.NewSpec(file)
 			if err != nil {
 				return err
 			}
 
-			configDir := cmd.Flag("config-dir").Value.String()
+			configDir := cmd.Flag(configDirOption).Value.String()
 			toc, err := config.LoadTOC(path.Join(configDir, "toc.yaml"))
 			err = toc.PopulateAssociates(spec)
 			if err != nil {
@@ -32,14 +32,14 @@ func Hugo() *cobra.Command {
 
 			toc.AddOtherResources(spec)
 
-			outputDir := cmd.Flag("output-dir").Value.String()
+			outputDir := cmd.Flag(outputDirOption).Value.String()
 			return toc.ToHugo(outputDir)
 		},
 	}
-	cmd.Flags().StringP("config-dir", "c", "", "Directory containing documentation configuration")
-	cmd.MarkFlagRequired("config-dir")
-	cmd.Flags().StringP("output-dir", "o", "", "Directory to write markdown files")
-	cmd.MarkFlagRequired("output-dir")
+	cmd.Flags().StringP(configDirOption, "c", "", "Directory containing documentation configuration")
+	cmd.MarkFlagRequired(configDirOption)
+	cmd.Flags().StringP(outputDirOption, "o", "", "Directory to write markdown files")
+	cmd.MarkFlagRequired(outputDirOption)
 
 	return cmd
 }

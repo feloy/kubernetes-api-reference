@@ -17,7 +17,7 @@ func GVKeysMap() *cobra.Command {
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			file := cmd.Flag("file").Value.String()
+			file := cmd.Flag(fileOption).Value.String()
 			spec, err := kubernetes.NewSpec(file)
 			if err != nil {
 				return err

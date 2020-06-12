@@ -18,13 +18,13 @@ func ShowTOCCmd() *cobra.Command {
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			file := cmd.Flag("file").Value.String()
+			file := cmd.Flag(fileOption).Value.String()
 			spec, err := kubernetes.NewSpec(file)
 			if err != nil {
 				return err
 			}
 
-			configDir := cmd.Flag("config-dir").Value.String()
+			configDir := cmd.Flag(configDirOption).Value.String()
 			toc, err := config.LoadTOC(path.Join(configDir, "toc.yaml"))
 			err = toc.PopulateAssociates(spec)
 			if err != nil {
@@ -37,8 +37,8 @@ func ShowTOCCmd() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringP("config-dir", "c", "", "Directory conatining documentation configuration")
-	cmd.MarkFlagRequired("config-fir")
+	cmd.Flags().StringP(configDirOption, "c", "", "Directory conatining documentation configuration")
+	cmd.MarkFlagRequired(configDirOption)
 
 	return cmd
 }
