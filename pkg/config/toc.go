@@ -7,6 +7,8 @@ import (
 	"os"
 	"sort"
 
+	"github.com/feloy/kubernetes-api-reference/markdown"
+	"github.com/feloy/kubernetes-api-reference/pkg/hugo"
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 	"github.com/go-openapi/spec"
 	"gopkg.in/yaml.v2"
@@ -28,6 +30,7 @@ type Chapter struct {
 	Name     string                `yaml:"name"`
 	Group    kubernetes.APIGroup   `yaml:"group"`
 	Version  kubernetes.APIVersion `yaml:"version"`
+	Key      kubernetes.Key
 	Sections []*Section
 }
 
@@ -71,8 +74,9 @@ func LoadTOC(filename string) (*TOC, error) {
 func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 	for _, part := range o.Parts {
 		for _, chapter := range part.Chapters {
-			main := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name), true)
+			key, main := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name), true)
 			if main != nil {
+				chapter.Key = key
 				chapter.Sections = []*Section{
 					NewSection(chapter.Name, main),
 				}
@@ -80,17 +84,17 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
 			}
 
-			specResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Spec"), true)
+			_, specResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Spec"), true)
 			if specResource != nil {
 				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"Spec", specResource))
 			}
 
-			statusResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Status"), true)
+			_, statusResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Status"), true)
 			if statusResource != nil {
 				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"Status", statusResource))
 			}
 
-			listResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"List"), true)
+			_, listResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"List"), true)
 			if listResource != nil {
 				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"List", listResource))
 			}
@@ -112,6 +116,7 @@ func (o *TOC) AddOtherResources(spec *kubernetes.Spec) {
 					Name:    v.Kind.String(),
 					Group:   v.Group,
 					Version: v.Version,
+					Key:     v.Key,
 				})
 			}
 		}
@@ -143,4 +148,67 @@ func GetGV(group kubernetes.APIGroup, version kubernetes.APIVersion) string {
 		return version.String()
 	}
 	return fmt.Sprintf("%s/%s", group, version.String())
+}
+
+// ToHugo outputs documentation in Markdown format for Hugo in dir directory
+func (o *TOC) ToHugo(dir string) error {
+	// Test that dir is empty
+	fileinfos, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return fmt.Errorf("Unable to open directory %s", dir)
+	}
+	if len(fileinfos) > 0 {
+		return fmt.Errorf("Directory %s must be empty", dir)
+	}
+
+	hugo := hugo.NewHugo(dir)
+	err = hugo.AddIndex("", map[string]interface{}{
+		"title": "Resources",
+	})
+	if err != nil {
+		return fmt.Errorf("Error writing index file in %s: %s", dir, err)
+	}
+
+	for p, part := range o.Parts {
+		partname, err := hugo.AddPart(part.Name)
+		if err != nil {
+			return fmt.Errorf("Error creating part %s: %s", part.Name, err)
+		}
+
+		err = hugo.AddIndex(partname, map[string]interface{}{
+			"title":       part.Name,
+			"draft":       false,
+			"collapsible": true,
+			"weight":      p + 1,
+		})
+
+		for c, chapter := range part.Chapters {
+			chaptername, err := hugo.AddChapter(partname, chapter.Name, map[string]interface{}{
+				"title":       chapter.Name,
+				"draft":       false,
+				"collapsible": false,
+				"weight":      c + 1,
+			})
+			if err != nil {
+				return fmt.Errorf("Error creating chapter %s/%s: %s", part.Name, chapter.Name, err)
+			}
+
+			err = hugo.AddContent(partname, chaptername, markdown.Code("apiVersion: "+GetGV(chapter.Group, chapter.Version)))
+			if err != nil {
+				return fmt.Errorf("Error adding GV for chapter %s/%s: %s", part.Name, chapter.Name, err)
+			}
+
+			err = hugo.AddContent(partname, chaptername, markdown.Code("import \""+chapter.Key.GoImportPrefix()+"\""))
+			if err != nil {
+				return fmt.Errorf("Error adding Go Import for chapter %s/%s: %s", part.Name, chapter.Name, err)
+			}
+
+			for _, section := range chapter.Sections {
+				hugo.AddSection(partname, chaptername, section.Name)
+				hugo.AddContent(partname, chaptername, section.Definition.Description)
+			}
+		}
+	}
+
+	return nil
 }

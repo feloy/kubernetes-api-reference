@@ -118,7 +118,7 @@ func (o *Spec) getResources() error {
 		}
 
 		resource := &Resource{
-			Key:        key,
+			Key:        Key(key),
 			Group:      APIGroup(group),
 			Version:    *apiversion,
 			Kind:       APIKind(kind),
@@ -131,7 +131,7 @@ func (o *Spec) getResources() error {
 }
 
 // GetResource returns the resource referenced by group/version/kind, or nil if not found
-func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, markAsDocumented bool) *spec.Schema {
+func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, markAsDocumented bool) (Key, *spec.Schema) {
 	// Search on K8s resources
 	for k, resources := range *o.Resources {
 		if k == kind {
@@ -140,7 +140,7 @@ func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, mar
 					if markAsDocumented {
 						(*o.Resources)[k][r].Documented = true
 					}
-					return &resource.Definition
+					return resource.Key.RemoveResourceName(), &resource.Definition
 				}
 			}
 		}
@@ -155,9 +155,9 @@ func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, mar
 	for _, k := range o.GVToKey[gvRes.GetGV()] {
 		gvk := k + "." + kind.String()
 		if def, found := o.Swagger.Definitions[gvk]; found {
-			return &def
+			return Key(k), &def
 		}
 	}
 
-	return nil
+	return "", nil
 }

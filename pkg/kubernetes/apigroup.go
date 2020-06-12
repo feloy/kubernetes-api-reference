@@ -1,15 +1,7 @@
 package kubernetes
 
-import "strings"
-
 // APIGroup represents the group of a Kubernetes API
 type APIGroup string
-
-// GoImportPrefix returns the path to use for this group in go import
-func (o APIGroup) GoImportPrefix() string {
-	parts := strings.Split(o.String(), ".")
-	return parts[1] + "." + parts[0] + "/" + strings.Join(parts[2:], "/")
-}
 
 func (o APIGroup) String() string {
 	return string(o)

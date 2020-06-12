@@ -41,4 +41,8 @@ func Test_PopulateAssociatesv118(t *testing.T) {
 	if l != 4 {
 		t.Errorf("Pod chapter should contain %d sections but contains %d sections", 4, l)
 	}
+
+	if toc.Parts[0].Chapters[0].Key != "io.k8s.api.core.v1" {
+		t.Errorf("Key of first chapter sould be %s but is %s", "io.k8s.api.core.v1", toc.Parts[0].Chapters[0].Key)
+	}
 }

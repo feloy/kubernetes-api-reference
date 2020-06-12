@@ -22,7 +22,7 @@ func Test_GetResourceV118(t *testing.T) {
 		t.Errorf("NewSpec should not return an errors but returns %s", err)
 	}
 	v1, _ := kubernetes.NewAPIVersion("v1")
-	res := spec.GetResource("", *v1, "Pod", false)
+	_, res := spec.GetResource("", *v1, "Pod", false)
 	if res.Description != "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts." {
 		t.Error("Error getting definition of Pod")
 	}

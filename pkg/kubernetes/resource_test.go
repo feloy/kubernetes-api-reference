@@ -184,3 +184,41 @@ func Test_ResourceAdd(t *testing.T) {
 		t.Errorf("Previous version for Kind1 should be %s but is %s", "extensions", resources["Kind1"][1].Group)
 	}
 }
+
+func Test_GoImportPrefix(t *testing.T) {
+	tests := []struct {
+		Key      kubernetes.Key
+		Expected string
+	}{
+		{
+			Key:      "io.k8s.api.core",
+			Expected: "k8s.io/api/core",
+		},
+	}
+
+	for _, test := range tests {
+		result := test.Key.GoImportPrefix()
+		if result != test.Expected {
+			t.Errorf("%s: Expected %s but got %s", test.Key, test.Expected, result)
+		}
+	}
+}
+
+func Test_RemoveResourceName(t *testing.T) {
+	tests := []struct {
+		Key      kubernetes.Key
+		Expected kubernetes.Key
+	}{
+		{
+			Key:      "io.k8s.api.core.PodSpec",
+			Expected: "io.k8s.api.core",
+		},
+	}
+
+	for _, test := range tests {
+		result := test.Key.RemoveResourceName()
+		if result != test.Expected {
+			t.Errorf("%s: Expected %s but got %s", test.Key, test.Expected, result)
+		}
+	}
+}

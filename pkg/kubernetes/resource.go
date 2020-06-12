@@ -3,21 +3,36 @@ package kubernetes
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/go-openapi/spec"
 )
 
+// Key of the resource in the OpenAPI definition (e.g. io.k8s.api.core.v1.Pod)
+type Key string
+
+// GoImportPrefix returns the path to use for this group in go import
+func (o Key) GoImportPrefix() string {
+	parts := strings.Split(string(o), ".")
+	return parts[1] + "." + parts[0] + "/" + strings.Join(parts[2:], "/")
+}
+
+// RemoveResourceName removes the last part of the key corresponding to the resource namz
+func (o Key) RemoveResourceName() Key {
+	parts := strings.Split(string(o), ".")
+	return Key(strings.Join(parts[:len(parts)-1], "."))
+}
+
 // Resource represent a Kubernetes API resource
 type Resource struct {
-	// The key of the resource in the OpenAPI definition (e.g. io.k8s.api.core.v1.Pod)
-	Key        string
+	Key        Key
 	Group      APIGroup
 	Version    APIVersion
 	Kind       APIKind
 	Definition spec.Schema
 
 	// Replaced indicates if this version is replaced by another one
-	ReplacedBy *string
+	ReplacedBy *Key
 	// Documented indicates if this resource was included in the TOC
 	Documented bool
 }

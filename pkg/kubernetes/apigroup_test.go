@@ -6,32 +6,13 @@ import (
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 )
 
-func Test_GoImportPrefix(t *testing.T) {
-	tests := []struct {
-		Group    kubernetes.APIGroup
-		Expected string
-	}{
-		{
-			Group:    "io.k8s.api.core",
-			Expected: "k8s.io/api/core",
-		},
-	}
-
-	for _, test := range tests {
-		result := test.Group.GoImportPrefix()
-		if result != test.Expected {
-			t.Errorf("%s: Expected %s but got %s", test.Group, test.Expected, result)
-		}
-	}
-}
-
 func Test_APIGroupReplaces(t *testing.T) {
 	tests := []struct {
 		Group1   kubernetes.APIGroup
 		Group2   kubernetes.APIGroup
 		Expected bool
 	}{
-		{"etworking", "extensions", true},
+		{"networking", "extensions", true},
 		{"", "events.k8s.io", true},
 	}
 
