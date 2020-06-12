@@ -12,7 +12,7 @@ var (
 	three = 3
 )
 
-func Test_NewAPIVersion(t *testing.T) {
+func TestNewAPIVersion(t *testing.T) {
 	tests := []struct {
 		Input         string
 		Expected      *kubernetes.APIVersion
@@ -83,7 +83,7 @@ func Test_NewAPIVersion(t *testing.T) {
 	}
 }
 
-func Test_String(t *testing.T) {
+func TestString(t *testing.T) {
 	tests := []struct {
 		Input    *kubernetes.APIVersion
 		Expected string
@@ -117,7 +117,7 @@ func Test_String(t *testing.T) {
 	}
 }
 
-func Test_LessThan(t *testing.T) {
+func TestLessThan(t *testing.T) {
 	tests := []struct {
 		V1       string
 		V2       string
@@ -146,7 +146,7 @@ func Test_LessThan(t *testing.T) {
 	}
 }
 
-func Test_Replaces(t *testing.T) {
+func TestReplaces(t *testing.T) {
 	tests := []struct {
 		V1       string
 		V2       string

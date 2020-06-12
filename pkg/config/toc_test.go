@@ -7,7 +7,7 @@ import (
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 )
 
-func Test_LoadTOCv118(t *testing.T) {
+func TestLoadTOCv118(t *testing.T) {
 	toc, err := config.LoadTOC("../../config/v1.18/toc.yaml")
 	if err != nil {
 		t.Errorf("should not get an error but got: %s", err)
@@ -17,7 +17,7 @@ func Test_LoadTOCv118(t *testing.T) {
 	}
 }
 
-func Test_PopulateAssociatesv118(t *testing.T) {
+func TestPopulateAssociatesv118(t *testing.T) {
 	spec, err := kubernetes.NewSpec("../../api/v1.18/swagger.json")
 	if err != nil {
 		t.Errorf("Error loding swagger file")

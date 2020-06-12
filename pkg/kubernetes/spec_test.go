@@ -6,7 +6,7 @@ import (
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 )
 
-func Test_SpecV118(t *testing.T) {
+func TestSpecV118(t *testing.T) {
 	spec, err := kubernetes.NewSpec("../../api/v1.18/swagger.json")
 	if err != nil {
 		t.Errorf("NewSpec should not return an errors but returns %s", err)
@@ -16,7 +16,7 @@ func Test_SpecV118(t *testing.T) {
 	}
 }
 
-func Test_GetResourceV118(t *testing.T) {
+func TestGetResourceV118(t *testing.T) {
 	spec, err := kubernetes.NewSpec("../../api/v1.18/swagger.json")
 	if err != nil {
 		t.Errorf("NewSpec should not return an errors but returns %s", err)

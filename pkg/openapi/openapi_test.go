@@ -6,7 +6,7 @@ import (
 	"github.com/feloy/kubernetes-api-reference/pkg/openapi"
 )
 
-func Test_LoadOpenAPISpecV118(t *testing.T) {
+func TestLoadOpenAPISpecV118(t *testing.T) {
 	spec, err := openapi.LoadOpenAPISpec("../../api/v1.18/swagger.json")
 	if err != nil {
 		t.Errorf("Failed to load spec")

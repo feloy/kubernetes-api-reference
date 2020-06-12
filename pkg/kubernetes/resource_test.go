@@ -6,7 +6,7 @@ import (
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 )
 
-func Test_ResourceLessThan(t *testing.T) {
+func TestResourceLessThan(t *testing.T) {
 	v1, err := kubernetes.NewAPIVersion("v1")
 	if err != nil {
 		t.Errorf("Error creating APIVersion from v1")
@@ -93,7 +93,7 @@ func Test_ResourceLessThan(t *testing.T) {
 	}
 }
 
-func Test_ResourceGetGV(t *testing.T) {
+func TestResourceGetGV(t *testing.T) {
 	v1, err := kubernetes.NewAPIVersion("v1")
 	if err != nil {
 		t.Errorf("Error creating APIVersion from v1")
@@ -137,7 +137,7 @@ func Test_ResourceGetGV(t *testing.T) {
 	}
 }
 
-func Test_ResourceAdd(t *testing.T) {
+func TestResourceAdd(t *testing.T) {
 	v1, err := kubernetes.NewAPIVersion("v1")
 	if err != nil {
 		t.Errorf("Error creating APIVersion from v1")
@@ -185,7 +185,7 @@ func Test_ResourceAdd(t *testing.T) {
 	}
 }
 
-func Test_GoImportPrefix(t *testing.T) {
+func TestGoImportPrefix(t *testing.T) {
 	tests := []struct {
 		Key      kubernetes.Key
 		Expected string
@@ -204,7 +204,7 @@ func Test_GoImportPrefix(t *testing.T) {
 	}
 }
 
-func Test_RemoveResourceName(t *testing.T) {
+func TestRemoveResourceName(t *testing.T) {
 	tests := []struct {
 		Key      kubernetes.Key
 		Expected kubernetes.Key

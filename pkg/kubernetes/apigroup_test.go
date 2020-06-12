@@ -6,7 +6,7 @@ import (
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 )
 
-func Test_APIGroupReplaces(t *testing.T) {
+func TestAPIGroupReplaces(t *testing.T) {
 	tests := []struct {
 		Group1   kubernetes.APIGroup
 		Group2   kubernetes.APIGroup
