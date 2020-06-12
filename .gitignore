@@ -13,3 +13,12 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+.firebase
+.firebaserc
+firebase.json
+
+/website/content/en/docs/
+/website/public
+/website/resources
+
