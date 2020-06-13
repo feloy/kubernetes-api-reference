@@ -21,7 +21,7 @@ func TestGetResourceV118(t *testing.T) {
 	if err != nil {
 		t.Errorf("NewSpec should not return an errors but returns %s", err)
 	}
-	v1 := newAPIVersionAssert("v1")
+	v1 := newAPIVersionAssert(t, "v1")
 	_, res := spec.GetResource("", *v1, "Pod", false)
 	if res.Description != "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts." {
 		t.Error("Error getting definition of Pod")
