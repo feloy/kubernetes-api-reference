@@ -1,10 +1,8 @@
 package cli
 
 import (
-	"path"
+	"fmt"
 
-	"github.com/feloy/kubernetes-api-reference/pkg/config"
-	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 	"github.com/spf13/cobra"
 )
 
@@ -17,20 +15,10 @@ func Hugo() *cobra.Command {
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			file := cmd.Flag(fileOption).Value.String()
-			spec, err := kubernetes.NewSpec(file)
+			toc, err := prepareTOC(cmd)
 			if err != nil {
-				return err
+				return fmt.Errorf("Unable to load specs and/or toc config: %v", err)
 			}
-
-			configDir := cmd.Flag(configDirOption).Value.String()
-			toc, err := config.LoadTOC(path.Join(configDir, "toc.yaml"))
-			err = toc.PopulateAssociates(spec)
-			if err != nil {
-				return err
-			}
-
-			toc.AddOtherResources(spec)
 
 			outputDir := cmd.Flag(outputDirOption).Value.String()
 			return toc.ToHugo(outputDir)
