@@ -25,10 +25,8 @@ func (o Key) RemoveResourceName() Key {
 
 // Resource represent a Kubernetes API resource
 type Resource struct {
-	Key        Key
-	Group      APIGroup
-	Version    APIVersion
-	Kind       APIKind
+	Key Key
+	GVKExtension
 	Definition spec.Schema
 
 	// Replaced indicates if this version is replaced by another one

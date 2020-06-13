@@ -76,53 +76,17 @@ func (o *Spec) getResources() error {
 	o.GVToKey = GVToKeyMap{}
 
 	for key, definition := range o.Swagger.Definitions {
-		extensions := definition.Extensions
-		extension, found := extensions["x-kubernetes-group-version-kind"]
+		gvk, found, err := getGVKExtension(definition)
+		if err != nil {
+			return fmt.Errorf("%s: %f", key, err)
+		}
 		if !found {
 			continue
 		}
-		gvks, ok := extension.([]interface{})
-		if !ok {
-			return fmt.Errorf("%s: x-kubernetes-group-version-kind is not an array", key)
-		}
-
-		if len(gvks) > 1 {
-			// TODO
-			//t.Errorf("%s: Count of x-kubernetes-group-version-kind should be 1 but is %d", key, len(gvks))
-			continue
-		}
-
-		gvk, ok := (gvks[0]).(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("%s: Error getting GVK", key)
-		}
-
-		group, ok := gvk["group"].(string)
-		if !ok {
-			return fmt.Errorf("%s: Error getting GVK apigroup", key)
-		}
-
-		version, ok := gvk["version"].(string)
-		if !ok {
-			return fmt.Errorf("%s: Error getting GVK apiversion", key)
-		}
-
-		apiversion, err := NewAPIVersion(version)
-		if err != nil {
-			return fmt.Errorf("%s: Error creating APIVersion", key)
-		}
-
-		kind, ok := gvk["kind"].(string)
-		if !ok {
-			return fmt.Errorf("%s: Error getting GVK apikind", key)
-		}
-
 		resource := &Resource{
-			Key:        Key(key),
-			Group:      APIGroup(group),
-			Version:    *apiversion,
-			Kind:       APIKind(kind),
-			Definition: definition,
+			Key:          Key(key),
+			GVKExtension: *gvk,
+			Definition:   definition,
 		}
 		o.Resources.Add(resource)
 		o.GVToKey.Add(key, resource)
@@ -148,8 +112,10 @@ func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, mar
 
 	// Get on definitions
 	gvRes := Resource{
-		Group:   group,
-		Version: version,
+		GVKExtension: GVKExtension{
+			Group:   group,
+			Version: version,
+		},
 	}
 
 	for _, k := range o.GVToKey[gvRes.GetGV()] {

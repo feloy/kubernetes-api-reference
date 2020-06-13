@@ -30,56 +30,72 @@ func TestResourceLessThan(t *testing.T) {
 		// General case
 		{
 			R1: kubernetes.Resource{
-				Key:     "key1",
-				Group:   kubernetes.APIGroup("apps"),
-				Version: *v1,
+				Key: "key1",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("apps"),
+					Version: *v1,
+				},
 			},
 			R2: kubernetes.Resource{
-				Key:     "key2",
-				Group:   kubernetes.APIGroup("apps"),
-				Version: *v1beta1,
+				Key: "key2",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("apps"),
+					Version: *v1beta1,
+				},
 			},
 			Expected: true,
 		},
 		// Cronjob resource in v1.18
 		{
 			R1: kubernetes.Resource{
-				Key:     "key1",
-				Group:   kubernetes.APIGroup("batch"),
-				Version: *v2alpha1,
+				Key: "key1",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("batch"),
+					Version: *v2alpha1,
+				},
 			},
 			R2: kubernetes.Resource{
-				Key:     "key2",
-				Group:   kubernetes.APIGroup("batch"),
-				Version: *v1beta1,
+				Key: "key2",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("batch"),
+					Version: *v1beta1,
+				},
 			},
 			Expected: true,
 		},
 		// Event resource in v1.18
 		{
 			R1: kubernetes.Resource{
-				Key:     "key1",
-				Group:   kubernetes.APIGroup(""),
-				Version: *v1,
+				Key: "key1",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup(""),
+					Version: *v1,
+				},
 			},
 			R2: kubernetes.Resource{
-				Key:     "key2",
-				Group:   kubernetes.APIGroup("events.k8s.io"),
-				Version: *v1,
+				Key: "key2",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("events.k8s.io"),
+					Version: *v1,
+				},
 			},
 			Expected: true,
 		},
 		// Ingress resource in v1.18
 		{
 			R1: kubernetes.Resource{
-				Key:     "key1",
-				Group:   kubernetes.APIGroup("networking.k8s.io"),
-				Version: *v1beta1,
+				Key: "key1",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("networking.k8s.io"),
+					Version: *v1beta1,
+				},
 			},
 			R2: kubernetes.Resource{
-				Key:     "key2",
-				Group:   kubernetes.APIGroup("extensions"),
-				Version: *v1beta1,
+				Key: "key2",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("extensions"),
+					Version: *v1beta1,
+				},
 			},
 			Expected: true,
 		},
@@ -105,25 +121,31 @@ func TestResourceGetGV(t *testing.T) {
 	}{
 		{
 			Input: kubernetes.Resource{
-				Key:     "key1",
-				Group:   kubernetes.APIGroup("apps"),
-				Version: *v1,
+				Key: "key1",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("apps"),
+					Version: *v1,
+				},
 			},
 			Expected: "apps/v1",
 		},
 		{
 			Input: kubernetes.Resource{
-				Key:     "key1",
-				Group:   kubernetes.APIGroup(""),
-				Version: *v1,
+				Key: "key1",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup(""),
+					Version: *v1,
+				},
 			},
 			Expected: "v1",
 		},
 		{
 			Input: kubernetes.Resource{
-				Key:     "key1",
-				Group:   kubernetes.APIGroup("storage.k8s.io"),
-				Version: *v1,
+				Key: "key1",
+				GVKExtension: kubernetes.GVKExtension{
+					Group:   kubernetes.APIGroup("storage.k8s.io"),
+					Version: *v1,
+				},
 			},
 			Expected: "storage.k8s.io/v1",
 		},
@@ -145,22 +167,28 @@ func TestResourceAdd(t *testing.T) {
 
 	resources := kubernetes.ResourceMap{}
 	resources.Add(&kubernetes.Resource{
-		Key:     "key1",
-		Group:   kubernetes.APIGroup("extensions"),
-		Version: *v1,
-		Kind:    kubernetes.APIKind("Kind1"),
+		Key: "key1",
+		GVKExtension: kubernetes.GVKExtension{
+			Group:   kubernetes.APIGroup("extensions"),
+			Version: *v1,
+			Kind:    kubernetes.APIKind("Kind1"),
+		},
 	})
 	resources.Add(&kubernetes.Resource{
-		Key:     "key1",
-		Group:   kubernetes.APIGroup("apps"),
-		Version: *v1,
-		Kind:    kubernetes.APIKind("Kind1"),
+		Key: "key1",
+		GVKExtension: kubernetes.GVKExtension{
+			Group:   kubernetes.APIGroup("apps"),
+			Version: *v1,
+			Kind:    kubernetes.APIKind("Kind1"),
+		},
 	})
 	resources.Add(&kubernetes.Resource{
-		Key:     "key1",
-		Group:   kubernetes.APIGroup("apps"),
-		Version: *v1,
-		Kind:    kubernetes.APIKind("Kind2"),
+		Key: "key1",
+		GVKExtension: kubernetes.GVKExtension{
+			Group:   kubernetes.APIGroup("apps"),
+			Version: *v1,
+			Kind:    kubernetes.APIKind("Kind2"),
+		},
 	})
 	if len(resources) != 2 {
 		t.Errorf("Len of resources should be %d but is %d", 2, len(resources))
