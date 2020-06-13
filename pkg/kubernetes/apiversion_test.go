@@ -131,14 +131,8 @@ func TestLessThan(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		v1, err := kubernetes.NewAPIVersion(test.V1)
-		if err != nil {
-			t.Errorf("Creating an APIVersion with '%s' should work", test.V1)
-		}
-		v2, err := kubernetes.NewAPIVersion(test.V2)
-		if err != nil {
-			t.Errorf("Creating an APIVersion with '%s' should work", test.V2)
-		}
+		v1 := newAPIVersionAssert(t, test.V1)
+		v2 := newAPIVersionAssert(t, test.V2)
 		result := v1.LessThan(v2)
 		if result != test.Expected {
 			t.Errorf("%s < %s: Expected %v but got %v", test.V1, test.V2, test.Expected, result)
@@ -164,17 +158,20 @@ func TestReplaces(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		v1, err := kubernetes.NewAPIVersion(test.V1)
-		if err != nil {
-			t.Errorf("Creating an APIVersion with '%s' should work", test.V1)
-		}
-		v2, err := kubernetes.NewAPIVersion(test.V2)
-		if err != nil {
-			t.Errorf("Creating an APIVersion with '%s' should work", test.V2)
-		}
+		v1 := newAPIVersionAssert(t, test.V1)
+		v2 := newAPIVersionAssert(t, test.V2)
 		result := v1.Replaces(v2)
 		if result != test.Expected {
 			t.Errorf("%s replaces %s: Expected %v but got %v", test.V1, test.V2, test.Expected, result)
 		}
 	}
+}
+
+// newAPIVersionAssert returns the APIVersion built from s or raises an error
+func newAPIVersionAssert(t *testing.T, s string) *kubernetes.APIVersion {
+	v, err := kubernetes.NewAPIVersion(s)
+	if err != nil {
+		t.Errorf("Creating an APIVersion with '%s' should work", s)
+	}
+	return v
 }

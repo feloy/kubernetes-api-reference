@@ -7,20 +7,9 @@ import (
 )
 
 func TestResourceLessThan(t *testing.T) {
-	v1, err := kubernetes.NewAPIVersion("v1")
-	if err != nil {
-		t.Errorf("Error creating APIVersion from v1")
-	}
-
-	v1beta1, err := kubernetes.NewAPIVersion("v1beta1")
-	if err != nil {
-		t.Errorf("Error creating APIVersion from v1beta1")
-	}
-
-	v2alpha1, err := kubernetes.NewAPIVersion("v2alpha1")
-	if err != nil {
-		t.Errorf("Error creating APIVersion from v2alpha1")
-	}
+	v1 := newAPIVersionAssert(t, "v1")
+	v1beta1 := newAPIVersionAssert("v1beta1")
+	v2alpha1 := newAPIVersionAssert("v2alpha1")
 
 	tests := []struct {
 		R1       kubernetes.Resource
@@ -110,10 +99,7 @@ func TestResourceLessThan(t *testing.T) {
 }
 
 func TestResourceGetGV(t *testing.T) {
-	v1, err := kubernetes.NewAPIVersion("v1")
-	if err != nil {
-		t.Errorf("Error creating APIVersion from v1")
-	}
+	v1 := newAPIVersionAssert("v1")
 
 	tests := []struct {
 		Input    kubernetes.Resource
@@ -160,7 +146,7 @@ func TestResourceGetGV(t *testing.T) {
 }
 
 func TestResourceAdd(t *testing.T) {
-	v1, err := kubernetes.NewAPIVersion("v1")
+	v1 := newAPIVersionAssert("v1")
 	if err != nil {
 		t.Errorf("Error creating APIVersion from v1")
 	}
