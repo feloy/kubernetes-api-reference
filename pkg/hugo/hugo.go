@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/feloy/kubernetes-api-reference/pkg/markdown"
 )
 
 // Hugo represents a Hugo content
@@ -54,7 +56,7 @@ func (o *Hugo) AddChapter(partname string, name string, metadata map[string]inte
 	}
 	defer f.Close()
 	writeMetadata(f, metadata)
-	fmt.Fprintf(f, "## %s\n", name)
+	fmt.Fprintf(f, markdown.Chapter(name))
 	return chaptername, nil
 }
 
@@ -68,7 +70,7 @@ func (o *Hugo) AddSection(partname string, chaptername string, name string) erro
 	}
 	defer f.Close()
 
-	fmt.Fprintf(f, "### %s\n", name)
+	fmt.Fprintf(f, markdown.Section(name))
 	return nil
 }
 

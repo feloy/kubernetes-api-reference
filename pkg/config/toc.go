@@ -7,9 +7,9 @@ import (
 	"os"
 	"sort"
 
-	"github.com/feloy/kubernetes-api-reference/markdown"
 	"github.com/feloy/kubernetes-api-reference/pkg/hugo"
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
+	"github.com/feloy/kubernetes-api-reference/pkg/markdown"
 	"github.com/go-openapi/spec"
 	"gopkg.in/yaml.v2"
 )
