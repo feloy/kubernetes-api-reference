@@ -84,19 +84,13 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
 			}
 
-			_, specResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Spec"), true)
-			if specResource != nil {
-				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"Spec", specResource))
-			}
-
-			_, statusResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"Status"), true)
-			if statusResource != nil {
-				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"Status", statusResource))
-			}
-
-			_, listResource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name+"List"), true)
-			if listResource != nil {
-				chapter.Sections = append(chapter.Sections, NewSection(chapter.Name+"List", listResource))
+			suffixes := []string{"Spec", "Status", "List"}
+			for _, suffix := range suffixes {
+				resourceName := chapter.Name + suffix
+				_, resource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(resourceName), true)
+				if resource != nil {
+					chapter.Sections = append(chapter.Sections, NewSection(resourceName, resource))
+				}
 			}
 		}
 	}
