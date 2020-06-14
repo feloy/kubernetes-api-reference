@@ -30,8 +30,7 @@ func getGVKExtension(definition spec.Schema) (*GVKExtension, bool, error) {
 	}
 
 	if len(gvks) > 1 {
-		// TODO
-		//t.Errorf("%s: Count of x-kubernetes-group-version-kind should be 1 but is %d", key, len(gvks))
+		// TODO DeleteOptions in all groups
 		return nil, false, nil
 	}
 

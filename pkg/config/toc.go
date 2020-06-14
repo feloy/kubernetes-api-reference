@@ -7,7 +7,6 @@ import (
 	"os"
 	"sort"
 
-	"github.com/feloy/kubernetes-api-reference/pkg/formats/markdown"
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 	"github.com/feloy/kubernetes-api-reference/pkg/outputs/hugo"
 	"github.com/go-openapi/spec"
@@ -156,53 +155,7 @@ func (o *TOC) ToHugo(dir string) error {
 	}
 
 	hugo := hugo.NewHugo(dir)
-	err = hugo.AddIndex("", map[string]interface{}{
-		"title": "Resources",
-	})
-	if err != nil {
-		return fmt.Errorf("Error writing index file in %s: %s", dir, err)
-	}
 
-	for p, part := range o.Parts {
-		partname, err := hugo.AddPart(part.Name)
-		if err != nil {
-			return fmt.Errorf("Error creating part %s: %s", part.Name, err)
-		}
-
-		err = hugo.AddIndex(partname, map[string]interface{}{
-			"title":       part.Name,
-			"draft":       false,
-			"collapsible": true,
-			"weight":      p + 1,
-		})
-
-		for c, chapter := range part.Chapters {
-			chaptername, err := hugo.AddChapter(partname, chapter.Name, map[string]interface{}{
-				"title":       chapter.Name,
-				"draft":       false,
-				"collapsible": false,
-				"weight":      c + 1,
-			})
-			if err != nil {
-				return fmt.Errorf("Error creating chapter %s/%s: %s", part.Name, chapter.Name, err)
-			}
-
-			err = hugo.AddContent(partname, chaptername, markdown.Code("apiVersion: "+GetGV(chapter.Group, chapter.Version)))
-			if err != nil {
-				return fmt.Errorf("Error adding GV for chapter %s/%s: %s", part.Name, chapter.Name, err)
-			}
-
-			err = hugo.AddContent(partname, chaptername, markdown.Code("import \""+chapter.Key.GoImportPrefix()+"\""))
-			if err != nil {
-				return fmt.Errorf("Error adding Go Import for chapter %s/%s: %s", part.Name, chapter.Name, err)
-			}
-
-			for _, section := range chapter.Sections {
-				hugo.AddSection(partname, chaptername, section.Name)
-				hugo.AddContent(partname, chaptername, section.Definition.Description)
-			}
-		}
-	}
-
+	o.OutputDocument(hugo)
 	return nil
 }
