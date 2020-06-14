@@ -1,5 +1,7 @@
 # kubernetes-api-reference
 
+[![Coverage Status](https://coveralls.io/repos/github/feloy/kubernetes-api-reference/badge.svg?branch=master)](https://coveralls.io/github/feloy/kubernetes-api-reference?branch=master)
+
 <!-- ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=feloy_kubernetes-api-reference&metric=bugs) -->
 <!-- ![Code Smalls](https://sonarcloud.io/api/project_badges/measure? project=feloy_kubernetes-api-reference&metric=code_smells) -->
 <!-- ![Duplicated lines](https://sonarcloud.io/api/project_badges/measure?project=feloy_kubernetes-api-reference&metric=duplicated_lines_density) -->

@@ -1,11 +1,24 @@
 steps:
-- id: build
-  name: gcr.io/cloud-builders/docker
-  args:
-  - build
-  - -t
-  - eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
-  - .
 
-images:
-- eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
+- id: test
+  name: golang:1.13-buster
+  args:
+  - bash
+  - -c
+  - |
+    go test -v -covermode=count -coverprofile=profile.cov ./...
+    go get github.com/mattn/goveralls
+    goveralls -coverprofile=profile.cov -repotoken $_REPOTOKEN
+
+#- id: build
+#  waitFor:
+#  - test
+#  name: gcr.io/cloud-builders/docker
+#  args:
+#  - build
+#  - -t
+#  - eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
+#  - .
+#
+#images:
+#- eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
