@@ -18,6 +18,7 @@ type Spec struct {
 	// populated by calling getResources
 	Resources *ResourceMap
 
+	// GVToKey maps beetween Kubernetes Group/Version and Swagger definition key
 	GVToKey GVToKeyMap
 }
 

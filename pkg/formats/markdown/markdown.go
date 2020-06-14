@@ -16,3 +16,8 @@ func Chapter(name string) string {
 func Section(name string) string {
 	return fmt.Sprintf("### %s\n", name)
 }
+
+// ListEntry returns a list entry
+func ListEntry(title string, content string) string {
+	return fmt.Sprintf("- %s\n  %s\n", title, content)
+}

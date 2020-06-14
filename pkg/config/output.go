@@ -1,6 +1,12 @@
 package config
 
-import "github.com/feloy/kubernetes-api-reference/pkg/outputs"
+import (
+	"sort"
+
+	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
+	"github.com/feloy/kubernetes-api-reference/pkg/outputs"
+	"github.com/go-openapi/spec"
+)
 
 // OutputDocument outputs contents using output
 func (o *TOC) OutputDocument(output outputs.Output) error {
@@ -68,5 +74,38 @@ func (o *TOC) OutputSection(i int, section *Section, outputChapter outputs.Chapt
 	if err != nil {
 		return err
 	}
+
+	return o.OutputProperties(section.Definition, outputSection)
+}
+
+// OutputProperties outputs the properties of a definition
+func (o *TOC) OutputProperties(definition spec.Schema, outputSection outputs.Section) error {
+	requiredProperties := definition.Required
+
+	ordered := orderedPropertyKeys(definition.Properties)
+
+	for _, name := range ordered {
+		details := definition.Properties[name]
+		property, err := kubernetes.NewProperty(name, details, requiredProperties)
+		if err != nil {
+			return err
+		}
+		err = outputSection.AddProperty(name, property)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
+}
+
+// orderedPropertyKeys returns the keys of m alphabetically ordered
+func orderedPropertyKeys(m map[string]spec.Schema) []string {
+	keys := make([]string, len(m))
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+	sort.Strings(keys)
+	return keys
 }

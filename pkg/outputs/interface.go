@@ -1,5 +1,9 @@
 package outputs
 
+import (
+	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
+)
+
 // Output is an interface for output formats
 type Output interface {
 	Prepare() error
@@ -21,4 +25,5 @@ type Chapter interface {
 // Section is an interface to a section of an output
 type Section interface {
 	AddContent(s string) error
+	AddProperty(name string, property *kubernetes.Property) error
 }

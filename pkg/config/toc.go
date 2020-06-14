@@ -109,7 +109,7 @@ func (o *TOC) AddOtherResources(spec *kubernetes.Spec) {
 					Name:    v.Kind.String(),
 					Group:   v.Group,
 					Version: v.Version,
-					Key:     v.Key,
+					Key:     v.Key.RemoveResourceName(),
 				})
 			}
 		}

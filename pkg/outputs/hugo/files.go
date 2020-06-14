@@ -50,12 +50,20 @@ func (o *Hugo) addChapter(partname string, name string, metadata map[string]inte
 	return chaptername, nil
 }
 
-// addSection adds a section to the chapter
-func (o *Hugo) addSection(partname string, chaptername string, name string) error {
+func (o *Hugo) getChapterFile(partname string, chaptername string) (*os.File, error) {
 	filename := filepath.Join(o.Directory, partname, chaptername) + ".md"
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Print("error opening file")
+		return nil, err
+	}
+	return f, err
+}
+
+// addSection adds a section to the chapter
+func (o *Hugo) addSection(partname string, chaptername string, name string) error {
+	f, err := o.getChapterFile(partname, chaptername)
+	if err != nil {
 		return err
 	}
 	defer f.Close()
@@ -66,14 +74,28 @@ func (o *Hugo) addSection(partname string, chaptername string, name string) erro
 
 // addContent adds content to the chapter in part
 func (o *Hugo) addContent(partname string, chaptername string, content string) error {
-	filename := filepath.Join(o.Directory, partname, chaptername) + ".md"
-	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := o.getChapterFile(partname, chaptername)
 	if err != nil {
-		fmt.Print("error opening file")
 		return err
 	}
 	defer f.Close()
+
 	_, err = fmt.Fprintf(f, "%s\n", content)
+	if err != nil {
+		fmt.Print("error printing in file")
+	}
+	return err
+}
+
+// addListEntry adds a list entry to the chapter in part
+func (o *Hugo) addListEntry(partname string, chaptername string, title string, content string) error {
+	f, err := o.getChapterFile(partname, chaptername)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = fmt.Fprintf(f, markdown.ListEntry(title, content))
 	if err != nil {
 		fmt.Print("error printing in file")
 	}
