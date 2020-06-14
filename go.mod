@@ -7,6 +7,6 @@ require (
 	github.com/go-openapi/spec v0.19.8
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
-	github.com/tektoncd/pipeline v0.12.1
+	github.com/tektoncd/pipeline v0.12.1 // indirect
 	gopkg.in/yaml.v2 v2.2.8
 )

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/feloy/kubernetes-api-reference/pkg/markdown"
+	"github.com/feloy/kubernetes-api-reference/pkg/formats/markdown"
 )
 
 // Hugo represents a Hugo content
