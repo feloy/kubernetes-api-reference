@@ -218,11 +218,23 @@ parts:
     version: v1
 - name: Common Definitions
   chapters:
+  - name: ExecAction
+    group: ""
+    version: "v1"
+  - name: HTTPGetAction
+    group: ""
+    version: "v1"
   - name: IntOrString
     key: "io.k8s.apimachinery.pkg.util.intstr.IntOrString"
+  - name: JSON
+    key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSON
   - name: JSONSchemaProps
     group: "apiextensions.k8s.io"
     version: "v1"
+  - name: JSONSchemaPropsOrArray
+    key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrArray
+  - name: JSONSchemaPropsOrBool
+    key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrBool
   - name: LabelSelector
     group: ""
     version: "v1"
@@ -235,14 +247,38 @@ parts:
   - name: MicroTime
     group: ""
     version: "v1"
+  - name: NodeAffinity
+    group: ""
+    version: "v1"
+  - name: NodeSelectorRequirement
+    group: ""
+    version: "v1"
+  - name: ObjectFieldSelector
+    group: ""
+    version: "v1"
   - name: ObjectMeta
     group: ""
     version: "v1"
   - name: ObjectReference
     group: ""
     version: "v1"
+  - name: PodAffinity
+    group: ""
+    version: "v1"
+  - name: PodAntiAffinity
+    group: ""
+    version: "v1"
   - name: Quantity
     key: "io.k8s.apimachinery.pkg.api.resource.Quantity"
+  - name: ResourceFieldSelector
+    group: ""
+    version: "v1"
+  - name: TCPSocketAction
+    group: ""
+    version: "v1"
   - name: Time
+    group: ""
+    version: "v1"
+  - name: TypedLocalObjectReference
     group: ""
     version: "v1"
