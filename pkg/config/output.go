@@ -79,11 +79,11 @@ func (o *TOC) OutputSection(i int, section *Section, outputChapter outputs.Chapt
 		return err
 	}
 
-	return o.OutputProperties(section.Definition, outputSection, []string{})
+	return o.OutputProperties(section.Name, section.Definition, outputSection, []string{})
 }
 
 // OutputProperties outputs the properties of a definition
-func (o *TOC) OutputProperties(definition spec.Schema, outputSection outputs.Section, prefix []string) error {
+func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSection outputs.Section, prefix []string) error {
 	requiredProperties := definition.Required
 
 	ordered := orderedPropertyKeys(definition.Properties)
@@ -103,11 +103,20 @@ func (o *TOC) OutputProperties(definition spec.Schema, outputSection outputs.Sec
 		}
 		if property.TypeKey != nil && len(linkend) == 0 {
 			if target, found := (*o.Definitions)[property.TypeKey.String()]; found {
-				o.OutputProperties(target, outputSection, append(prefix, name))
+				o.setDocumentedDefinition(property.TypeKey, defname+"/"+strings.Join(completeName, "."))
+				o.OutputProperties(defname, target, outputSection, append(prefix, name))
 			}
 		}
 	}
 	return nil
+}
+
+func (o *TOC) setDocumentedDefinition(key *kubernetes.Key, from string) {
+	if _, found := o.DocumentedDefinitions[*key]; found {
+		o.DocumentedDefinitions[*key] = append(o.DocumentedDefinitions[*key], from)
+	} else {
+		o.DocumentedDefinitions[*key] = []string{from}
+	}
 }
 
 // orderedPropertyKeys returns the keys of m alphabetically ordered

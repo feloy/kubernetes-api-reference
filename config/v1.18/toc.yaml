@@ -229,6 +229,9 @@ parts:
   - name: ListMeta
     group: ""
     version: "v1"
+  - name: LocalObjectReference
+    group: ""
+    version: "v1"
   - name: MicroTime
     group: ""
     version: "v1"

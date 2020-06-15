@@ -15,9 +15,10 @@ import (
 
 // TOC is the table of contents of the documentation
 type TOC struct {
-	Parts       []*Part `yaml:"parts"`
-	LinkEnds    map[string][]string
-	Definitions *spec.Definitions
+	Parts                 []*Part `yaml:"parts"`
+	LinkEnds              map[string][]string
+	Definitions           *spec.Definitions
+	DocumentedDefinitions map[kubernetes.Key][]string
 }
 
 // Part contains chapters
@@ -68,6 +69,7 @@ func LoadTOC(filename string) (*TOC, error) {
 		return nil, err
 	}
 
+	result.DocumentedDefinitions = map[kubernetes.Key][]string{}
 	return &result, nil
 }
 
@@ -84,8 +86,8 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 					chapter.Sections = []*Section{
 						newSection,
 					}
+					o.LinkEnds[chapter.Key.String()] = []string{part.Name, chapter.Name, newSection.Name}
 					continue
-					//					o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
 				}
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
 			}
@@ -178,5 +180,18 @@ func (o *TOC) ToHugo(dir string) error {
 	hugo := hugo.NewHugo(dir)
 
 	o.OutputDocument(hugo)
+
+	o.outputDocumentedDefinitions()
 	return nil
+}
+
+func (o *TOC) outputDocumentedDefinitions() {
+	for k, v := range o.DocumentedDefinitions {
+		if len(v) != 1 {
+			fmt.Printf("%s:\n", k)
+			for _, s := range v {
+				fmt.Printf(" - %s\n", s)
+			}
+		}
+	}
 }
