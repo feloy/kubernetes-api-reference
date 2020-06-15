@@ -16,7 +16,7 @@ type Property struct {
 }
 
 // NewProperty returns a new Property from its swagger definition
-func NewProperty(name string, details spec.Schema, required []string) (*Property, error) {
+func NewProperty(name string, details spec.Schema, required []string) *Property {
 	typ, key := getTypeNameAndKey(details)
 	result := Property{
 		Name:        name,
@@ -26,7 +26,7 @@ func NewProperty(name string, details spec.Schema, required []string) (*Property
 	}
 	result.Required = isRequired(name, required)
 
-	return &result, nil
+	return &result
 }
 
 // isRequired returns true if name appears in the required array

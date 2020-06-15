@@ -86,11 +86,8 @@ func (o *TOC) OutputProperties(definition spec.Schema, outputSection outputs.Sec
 
 	for _, name := range ordered {
 		details := definition.Properties[name]
-		property, err := kubernetes.NewProperty(name, details, requiredProperties)
-		if err != nil {
-			return err
-		}
-		err = outputSection.AddProperty(name, property)
+		property := kubernetes.NewProperty(name, details, requiredProperties)
+		err := outputSection.AddProperty(name, property)
 		if err != nil {
 			return err
 		}
