@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/go-openapi/spec"
 )
@@ -45,7 +46,7 @@ func isRequired(name string, required []string) bool {
 func getTypeNameAndKey(s spec.Schema) (string, *Key) {
 	// Get the reference for complex types
 	if isDefinition(s) {
-		key := Key(s.SchemaProps.Ref.GetPointer().String())
+		key := Key(strings.TrimPrefix(s.SchemaProps.Ref.GetPointer().String(), "/definitions/"))
 		return key.ResourceName(), &key
 	}
 
