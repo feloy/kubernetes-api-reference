@@ -25,5 +25,5 @@ type Chapter interface {
 // Section is an interface to a section of an output
 type Section interface {
 	AddContent(s string) error
-	AddProperty(name string, property *kubernetes.Property, linkend []string) error
+	AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error
 }

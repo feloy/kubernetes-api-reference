@@ -21,11 +21,14 @@ func Section(name string) string {
 }
 
 // ListEntry returns a list entry
-func ListEntry(title string, content string) string {
+func ListEntry(title string, content string, indentLevel int) string {
+	titleIndent := strings.Repeat("  ", indentLevel) + "- "
+	descIndent := strings.Repeat("  ", indentLevel) + "  "
+
 	// Indent all lines
 	parts := strings.Split(content, "\n")
 	for i := range parts {
-		parts[i] = "  " + parts[i]
+		parts[i] = descIndent + parts[i]
 	}
-	return fmt.Sprintf("- %s\n%s\n", title, strings.Join(parts, "\n"))
+	return fmt.Sprintf("%s%s\n%s\n", titleIndent, title, strings.Join(parts, "\n"))
 }

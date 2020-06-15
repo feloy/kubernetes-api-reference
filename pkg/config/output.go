@@ -2,6 +2,7 @@ package config
 
 import (
 	"sort"
+	"strings"
 
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 	"github.com/feloy/kubernetes-api-reference/pkg/outputs"
@@ -78,11 +79,11 @@ func (o *TOC) OutputSection(i int, section *Section, outputChapter outputs.Chapt
 		return err
 	}
 
-	return o.OutputProperties(section.Definition, outputSection)
+	return o.OutputProperties(section.Definition, outputSection, []string{})
 }
 
 // OutputProperties outputs the properties of a definition
-func (o *TOC) OutputProperties(definition spec.Schema, outputSection outputs.Section) error {
+func (o *TOC) OutputProperties(definition spec.Schema, outputSection outputs.Section, prefix []string) error {
 	requiredProperties := definition.Required
 
 	ordered := orderedPropertyKeys(definition.Properties)
@@ -94,9 +95,16 @@ func (o *TOC) OutputProperties(definition spec.Schema, outputSection outputs.Sec
 		if property.TypeKey != nil {
 			linkend = o.LinkEnds[property.TypeKey.String()]
 		}
-		err := outputSection.AddProperty(name, property, linkend)
+		completeName := prefix
+		completeName = append(completeName, name)
+		err := outputSection.AddProperty(strings.Join(completeName, "."), property, linkend, len(prefix) > 0)
 		if err != nil {
 			return err
+		}
+		if property.TypeKey != nil && len(linkend) == 0 {
+			if target, found := (*o.Definitions)[property.TypeKey.String()]; found {
+				o.OutputProperties(target, outputSection, append(prefix, name))
+			}
 		}
 	}
 	return nil

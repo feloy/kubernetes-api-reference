@@ -28,7 +28,7 @@ func (o FakeChapter) AddSection(i int, name string) (outputs.Section, error) {
 type FakeSection struct{}
 
 func (o FakeSection) AddContent(s string) error { return nil }
-func (o FakeSection) AddProperty(name string, property *kubernetes.Property, linkend []string) error {
+func (o FakeSection) AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error {
 	return nil
 }
 
@@ -47,6 +47,6 @@ func TestOutputDocumentV118(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-
+	toc.Definitions = &spec.Swagger.Definitions
 	toc.OutputDocument(FakeOutput{})
 }

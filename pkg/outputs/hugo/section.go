@@ -20,7 +20,11 @@ func (o Section) AddContent(s string) error {
 }
 
 // AddProperty adds a property to the section
-func (o Section) AddProperty(name string, property *kubernetes.Property, linkend []string) error {
+func (o Section) AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error {
+	indentLevel := 0
+	if indent {
+		indentLevel++
+	}
 	required := ""
 	if property.Required {
 		required = ", required"
@@ -29,7 +33,7 @@ func (o Section) AddProperty(name string, property *kubernetes.Property, linkend
 	link := ""
 	var title string
 	if property.TypeKey != nil {
-		link = property.Type + ", see " + property.TypeKey.String()
+		link = property.Type
 		if len(linkend) > 0 {
 			link = o.hugo.LinkEnd(linkend, property.Type)
 		}
@@ -38,5 +42,5 @@ func (o Section) AddProperty(name string, property *kubernetes.Property, linkend
 		title = fmt.Sprintf("**%s** (%s%s)%s", name, property.Type, link, required)
 	}
 
-	return o.hugo.addListEntry(o.part.name, o.chapter.name, title, property.Description)
+	return o.hugo.addListEntry(o.part.name, o.chapter.name, title, property.Description, indentLevel)
 }

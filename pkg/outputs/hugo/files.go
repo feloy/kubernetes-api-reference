@@ -86,14 +86,14 @@ func (o *Hugo) addContent(partname string, chaptername string, content string) e
 }
 
 // addListEntry adds a list entry to the chapter in part
-func (o *Hugo) addListEntry(partname string, chaptername string, title string, content string) error {
+func (o *Hugo) addListEntry(partname string, chaptername string, title string, content string, indentLevel int) error {
 	f, err := o.getChapterFile(partname, chaptername)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	_, err = fmt.Fprintf(f, markdown.ListEntry(title, content))
+	_, err = fmt.Fprintf(f, markdown.ListEntry(title, content, indentLevel))
 	if err != nil {
 		fmt.Print("error printing in file")
 	}
