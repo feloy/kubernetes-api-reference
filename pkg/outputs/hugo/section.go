@@ -29,7 +29,7 @@ func (o Section) AddProperty(name string, property *kubernetes.Property, linkend
 	link := ""
 	var title string
 	if property.TypeKey != nil {
-		link = " [" + property.TypeKey.String() + "]"
+		link = property.Type + ", see " + property.TypeKey.String()
 		if len(linkend) > 0 {
 			link = o.hugo.LinkEnd(linkend, property.Type)
 		}
