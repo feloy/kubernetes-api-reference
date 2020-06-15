@@ -1,6 +1,8 @@
 package kubernetes
 
-import "strings"
+import (
+	"strings"
+)
 
 // Key of the resource in the OpenAPI definition (e.g. io.k8s.api.core.v1.Pod)
 type Key string
