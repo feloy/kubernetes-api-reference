@@ -15,7 +15,8 @@ import (
 
 // TOC is the table of contents of the documentation
 type TOC struct {
-	Parts []*Part `yaml:"parts"`
+	Parts    []*Part `yaml:"parts"`
+	LinkEnds map[string][]string
 }
 
 // Part contains chapters
@@ -71,14 +72,18 @@ func LoadTOC(filename string) (*TOC, error) {
 
 // PopulateAssociates adds sections to the chapters found in the spec
 func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
+	o.LinkEnds = make(map[string][]string)
+
 	for _, part := range o.Parts {
 		for _, chapter := range part.Chapters {
 			key, main := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name), true)
 			if main != nil {
 				chapter.Key = key
+				newSection := NewSection(chapter.Name, main)
 				chapter.Sections = []*Section{
-					NewSection(chapter.Name, main),
+					newSection,
 				}
+				o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
 			} else {
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
 			}
@@ -86,9 +91,11 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 			suffixes := []string{"Spec", "Status", "List"}
 			for _, suffix := range suffixes {
 				resourceName := chapter.Name + suffix
-				_, resource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(resourceName), true)
+				key, resource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(resourceName), true)
 				if resource != nil {
-					chapter.Sections = append(chapter.Sections, NewSection(resourceName, resource))
+					newSection := NewSection(resourceName, resource)
+					chapter.Sections = append(chapter.Sections, newSection)
+					o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
 				}
 			}
 		}

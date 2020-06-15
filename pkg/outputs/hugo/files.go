@@ -25,8 +25,7 @@ func (o *Hugo) addIndex(subdir string, metadata map[string]interface{}) error {
 
 // addPart adds a directory in the Hugo content
 func (o *Hugo) addPart(name string) (string, error) {
-	subdir := strings.ToLower(name)
-	subdir = strings.ReplaceAll(subdir, " ", "-")
+	subdir := escapeName(name)
 	dirname := filepath.Join(o.Directory, subdir)
 	err := os.Mkdir(dirname, 0755)
 	if err != nil {
@@ -37,8 +36,7 @@ func (o *Hugo) addPart(name string) (string, error) {
 
 // addChapter adds a chapter to the part
 func (o *Hugo) addChapter(partname string, name string, metadata map[string]interface{}) (string, error) {
-	chaptername := strings.ToLower(name)
-	chaptername = strings.ReplaceAll(chaptername, " ", "-")
+	chaptername := escapeName(name)
 	filename := filepath.Join(o.Directory, partname, chaptername) + ".md"
 	f, err := os.Create(filename)
 	if err != nil {
@@ -127,4 +125,11 @@ func writeMetadata(f io.Writer, metadata map[string]interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// escapeName returns a name usable as file name
+func escapeName(s string) string {
+	result := strings.ToLower(s)
+	result = strings.ReplaceAll(result, " ", "-")
+	return result
 }

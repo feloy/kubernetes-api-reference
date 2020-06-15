@@ -79,7 +79,7 @@ func TestGetTypeNameAndKey(t *testing.T) {
 				},
 			},
 			ExpectedName: "PodSpec",
-			ExpectedKey:  func(k Key) *Key { return &k }("/definitions/io.k8s.api.core.v1.PodSpec"),
+			ExpectedKey:  func(k Key) *Key { return &k }("io.k8s.api.core.v1.PodSpec"),
 		},
 	}
 

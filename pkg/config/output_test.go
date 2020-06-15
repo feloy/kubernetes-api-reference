@@ -27,8 +27,10 @@ func (o FakeChapter) AddSection(i int, name string) (outputs.Section, error) {
 
 type FakeSection struct{}
 
-func (o FakeSection) AddContent(s string) error                                    { return nil }
-func (o FakeSection) AddProperty(name string, property *kubernetes.Property) error { return nil }
+func (o FakeSection) AddContent(s string) error { return nil }
+func (o FakeSection) AddProperty(name string, property *kubernetes.Property, linkend []string) error {
+	return nil
+}
 
 func TestOutputDocumentV118(t *testing.T) {
 	spec, err := kubernetes.NewSpec("../../api/v1.18/swagger.json")

@@ -12,8 +12,8 @@ func TestLoadTOCv118(t *testing.T) {
 	if err != nil {
 		t.Errorf("should not get an error but got: %s", err)
 	}
-	if len(toc.Parts) != 8 {
-		t.Errorf("Should get %d parts but got %d", 8, len(toc.Parts))
+	if len(toc.Parts) != 9 {
+		t.Errorf("Should get %d parts but got %d", 9, len(toc.Parts))
 	}
 }
 

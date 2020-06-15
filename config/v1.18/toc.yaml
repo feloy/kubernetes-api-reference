@@ -216,3 +216,23 @@ parts:
   - name: Binding
     group: ""
     version: v1
+- name: Common Definitions
+  chapters:
+  - name: LabelSelector
+    group: ""
+    version: "v1"
+  - name: ListMeta
+    group: ""
+    version: "v1"
+  - name: MicroTime
+    group: ""
+    version: "v1"
+  - name: ObjectMeta
+    group: ""
+    version: "v1"
+  - name: ObjectReference
+    group: ""
+    version: "v1"
+  - name: Time
+    group: ""
+    version: "v1"

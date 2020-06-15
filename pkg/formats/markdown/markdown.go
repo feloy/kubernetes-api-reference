@@ -1,6 +1,9 @@
 package markdown
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // Code returns 's' as code
 func Code(s string) string {
@@ -19,5 +22,10 @@ func Section(name string) string {
 
 // ListEntry returns a list entry
 func ListEntry(title string, content string) string {
-	return fmt.Sprintf("- %s\n  %s\n", title, content)
+	// Indent all lines
+	parts := strings.Split(content, "\n")
+	for i := range parts {
+		parts[i] = "  " + parts[i]
+	}
+	return fmt.Sprintf("- %s\n%s\n", title, strings.Join(parts, "\n"))
 }

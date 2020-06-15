@@ -20,18 +20,23 @@ func (o Section) AddContent(s string) error {
 }
 
 // AddProperty adds a property to the section
-func (o Section) AddProperty(name string, property *kubernetes.Property) error {
+func (o Section) AddProperty(name string, property *kubernetes.Property, linkend []string) error {
 	required := ""
 	if property.Required {
 		required = ", required"
 	}
 
 	link := ""
+	var title string
 	if property.TypeKey != nil {
 		link = " [" + property.TypeKey.String() + "]"
+		if len(linkend) > 0 {
+			link = o.hugo.LinkEnd(linkend, property.Type)
+		}
+		title = fmt.Sprintf("**%s** (%s)%s", name, link, required)
+	} else {
+		title = fmt.Sprintf("**%s** (%s%s)%s", name, property.Type, link, required)
 	}
-
-	title := fmt.Sprintf("**%s** (%s%s)%s", name, property.Type, link, required)
 
 	return o.hugo.addListEntry(o.part.name, o.chapter.name, title, property.Description)
 }
