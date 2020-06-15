@@ -15,8 +15,9 @@ import (
 
 // TOC is the table of contents of the documentation
 type TOC struct {
-	Parts    []*Part `yaml:"parts"`
-	LinkEnds map[string][]string
+	Parts       []*Part `yaml:"parts"`
+	LinkEnds    map[string][]string
+	Definitions *spec.Definitions
 }
 
 // Part contains chapters
