@@ -127,3 +127,9 @@ func (o *Spec) GetResource(group APIGroup, version APIVersion, kind APIKind, mar
 
 	return "", nil
 }
+
+// GetDefinition returns the definition referenced by key
+func (o *Spec) GetDefinition(key Key) *spec.Schema {
+	s := o.Swagger.Definitions[key.String()]
+	return &s
+}

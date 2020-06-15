@@ -46,13 +46,16 @@ func (o *TOC) OutputChapter(i int, chapter *Chapter, outputPart outputs.Part) er
 	if err != nil {
 		return err
 	}
-	err = outputChapter.SetAPIVersion(GetGV(chapter.Group, chapter.Version))
-	if err != nil {
-		return err
-	}
-	err = outputChapter.SetGoImport(chapter.Key.GoImportPrefix())
-	if err != nil {
-		return err
+
+	if chapter.Group != nil && chapter.Version != nil {
+		err = outputChapter.SetAPIVersion(GetGV(*chapter.Group, *chapter.Version))
+		if err != nil {
+			return err
+		}
+		err = outputChapter.SetGoImport(chapter.Key.GoImportPrefix())
+		if err != nil {
+			return err
+		}
 	}
 
 	for s, tocSection := range chapter.Sections {

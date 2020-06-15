@@ -27,10 +27,10 @@ type Part struct {
 
 // Chapter contains a definition of a main resource and its associated resources and definitions
 type Chapter struct {
-	Name     string                `yaml:"name"`
-	Group    kubernetes.APIGroup   `yaml:"group"`
-	Version  kubernetes.APIVersion `yaml:"version"`
-	Key      kubernetes.Key
+	Name     string                 `yaml:"name"`
+	Group    *kubernetes.APIGroup   `yaml:"group"`
+	Version  *kubernetes.APIVersion `yaml:"version"`
+	Key      kubernetes.Key         `yaml:"key"`
 	Sections []*Section
 }
 
@@ -76,7 +76,20 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 
 	for _, part := range o.Parts {
 		for _, chapter := range part.Chapters {
-			key, main := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(chapter.Name), true)
+			if len(chapter.Key.String()) > 0 {
+				main := spec.GetDefinition(chapter.Key)
+				if main != nil {
+					newSection := NewSection(chapter.Name, main)
+					chapter.Sections = []*Section{
+						newSection,
+					}
+					continue
+					//					o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
+				}
+				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
+			}
+
+			key, main := spec.GetResource(*chapter.Group, *chapter.Version, kubernetes.APIKind(chapter.Name), true)
 			if main != nil {
 				chapter.Key = key
 				newSection := NewSection(chapter.Name, main)
@@ -91,7 +104,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 			suffixes := []string{"Spec", "Status", "List"}
 			for _, suffix := range suffixes {
 				resourceName := chapter.Name + suffix
-				key, resource := spec.GetResource(chapter.Group, chapter.Version, kubernetes.APIKind(resourceName), true)
+				key, resource := spec.GetResource(*chapter.Group, *chapter.Version, kubernetes.APIKind(resourceName), true)
 				if resource != nil {
 					newSection := NewSection(resourceName, resource)
 					chapter.Sections = append(chapter.Sections, newSection)
@@ -114,8 +127,8 @@ func (o *TOC) AddOtherResources(spec *kubernetes.Spec) {
 			if v.ReplacedBy == nil && !v.Documented {
 				part.Chapters = append(part.Chapters, &Chapter{
 					Name:    v.Kind.String(),
-					Group:   v.Group,
-					Version: v.Version,
+					Group:   &v.Group,
+					Version: &v.Version,
 					Key:     v.Key.RemoveResourceName(),
 				})
 			}

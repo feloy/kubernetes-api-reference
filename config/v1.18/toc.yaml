@@ -218,6 +218,8 @@ parts:
     version: v1
 - name: Common Definitions
   chapters:
+  - name: IntOrString
+    key: "io.k8s.apimachinery.pkg.util.intstr.IntOrString"
   - name: LabelSelector
     group: ""
     version: "v1"
@@ -233,6 +235,8 @@ parts:
   - name: ObjectReference
     group: ""
     version: "v1"
+  - name: Quantity
+    key: "io.k8s.apimachinery.pkg.api.resource.Quantity"
   - name: Time
     group: ""
     version: "v1"
