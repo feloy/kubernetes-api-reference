@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -164,6 +165,17 @@ func TestReplaces(t *testing.T) {
 		if result != test.Expected {
 			t.Errorf("%s replaces %s: Expected %v but got %v", test.V1, test.V2, test.Expected, result)
 		}
+	}
+}
+
+func TestUnmarshalYAML(t *testing.T) {
+	a := struct {
+		Version kubernetes.APIVersion `yaml:"version"`
+	}{}
+	yaml.Unmarshal([]byte("{ \"version\": \"v1alpha1\" }"), &a)
+	expected := newAPIVersionAssert(t, "v1alpha1")
+	if a.Version.String() != expected.String() {
+		t.Errorf("Should be %#v but is %#v", expected, a.Version)
 	}
 }
 

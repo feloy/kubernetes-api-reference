@@ -26,4 +26,9 @@ func TestGetResourceV118(t *testing.T) {
 	if res.Description != "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts." {
 		t.Error("Error getting definition of Pod")
 	}
+
+	_, res = spec.GetResource("", *v1, "PodSpec", false)
+	if res.Description != "PodSpec is a description of a pod." {
+		t.Error("Error getting definition of PodSpec")
+	}
 }
