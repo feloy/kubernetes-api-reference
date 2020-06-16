@@ -20,11 +20,9 @@ parts:
     group: ""
     version: v1
   - name: Container
-    group: ""
-    version: v1
+    key: io.k8s.api.core.v1.Container
   - name: EphemeralContainer
-    group: ""
-    version: v1
+    key: io.k8s.api.core.v1.EphemeralContainer
   - name: PodTemplate
     group: ""
     version: v1
@@ -93,8 +91,7 @@ parts:
     group: ""
     version: v1
   - name: Volume
-    group: ""
-    version: v1
+    key: io.k8s.api.core.v1.Volume
   - name: PersistentVolumeClaim
     group: ""
     version: v1
@@ -219,66 +216,48 @@ parts:
 - name: Common Definitions
   chapters:
   - name: ExecAction
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.ExecAction
   - name: HTTPGetAction
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.HTTPGetAction
   - name: IntOrString
     key: "io.k8s.apimachinery.pkg.util.intstr.IntOrString"
   - name: JSON
     key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSON
   - name: JSONSchemaProps
-    group: "apiextensions.k8s.io"
-    version: "v1"
+    key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps
   - name: JSONSchemaPropsOrArray
     key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrArray
   - name: JSONSchemaPropsOrBool
     key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrBool
   - name: LabelSelector
-    group: ""
-    version: "v1"
+    key: io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
   - name: ListMeta
-    group: ""
-    version: "v1"
+    key: io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
   - name: LocalObjectReference
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.LocalObjectReference
   - name: MicroTime
-    group: ""
-    version: "v1"
+    key: io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
   - name: NodeAffinity
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.NodeAffinity
   - name: NodeSelectorRequirement
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.NodeSelectorRequirement
   - name: ObjectFieldSelector
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.ObjectFieldSelector
   - name: ObjectMeta
-    group: ""
-    version: "v1"
+    key: io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta
   - name: ObjectReference
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.ObjectReference
   - name: PodAffinity
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.PodAffinity
   - name: PodAntiAffinity
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.PodAntiAffinity
   - name: Quantity
     key: "io.k8s.apimachinery.pkg.api.resource.Quantity"
   - name: ResourceFieldSelector
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.ResourceFieldSelector
   - name: TCPSocketAction
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.TCPSocketAction
   - name: Time
-    group: ""
-    version: "v1"
+    key: io.k8s.apimachinery.pkg.apis.meta.v1.Time
   - name: TypedLocalObjectReference
-    group: ""
-    version: "v1"
+    key: io.k8s.api.core.v1.TypedLocalObjectReference

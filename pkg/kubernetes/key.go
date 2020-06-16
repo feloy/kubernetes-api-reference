@@ -10,13 +10,13 @@ type Key string
 // GoImportPrefix returns the path to use for this group in go import
 func (o Key) GoImportPrefix() string {
 	parts := strings.Split(o.String(), ".")
-	return parts[1] + "." + parts[0] + "/" + strings.Join(parts[2:], "/")
+	return parts[1] + "." + parts[0] + "/" + strings.Join(parts[2:len(parts)-1], "/")
 }
 
-// RemoveResourceName removes the last part of the key corresponding to the resource namz
-func (o Key) RemoveResourceName() Key {
+// RemoveResourceName removes the last part of the key corresponding to the resource name
+func (o Key) RemoveResourceName() string {
 	parts := strings.Split(o.String(), ".")
-	return Key(strings.Join(parts[:len(parts)-1], "."))
+	return strings.Join(parts[:len(parts)-1], ".")
 }
 
 // ResourceName returns the resource name part of a key

@@ -202,7 +202,7 @@ func TestGoImportPrefix(t *testing.T) {
 		Expected string
 	}{
 		{
-			Key:      "io.k8s.api.core",
+			Key:      "io.k8s.api.core.Pod",
 			Expected: "k8s.io/api/core",
 		},
 	}
@@ -218,7 +218,7 @@ func TestGoImportPrefix(t *testing.T) {
 func TestRemoveResourceName(t *testing.T) {
 	tests := []struct {
 		Key      kubernetes.Key
-		Expected kubernetes.Key
+		Expected string
 	}{
 		{
 			Key:      "io.k8s.api.core.PodSpec",

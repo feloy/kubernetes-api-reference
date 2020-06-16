@@ -93,7 +93,7 @@ func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSec
 		property := kubernetes.NewProperty(name, details, requiredProperties)
 		var linkend []string
 		if property.TypeKey != nil {
-			linkend = o.LinkEnds[property.TypeKey.String()]
+			linkend = o.LinkEnds[*property.TypeKey]
 		}
 		completeName := prefix
 		completeName = append(completeName, name)
