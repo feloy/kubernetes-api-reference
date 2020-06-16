@@ -70,7 +70,10 @@ func (o *TOC) PopulateAssociates(thespec *kubernetes.Spec) error {
 
 	for _, part := range o.Parts {
 		for _, chapter := range part.Chapters {
-			chapter.populate(part, o, thespec)
+			err := chapter.populate(part, o, thespec)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

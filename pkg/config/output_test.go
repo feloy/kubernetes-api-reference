@@ -35,12 +35,20 @@ func (o FakeSection) AddProperty(name string, property *kubernetes.Property, lin
 }
 
 func TestOutputDocumentV118(t *testing.T) {
-	spec, err := kubernetes.NewSpec("../../api/v1.18/swagger.json")
+	outputDocumentVersion(t, "v1.18")
+}
+
+func TestOutputDocumentV119(t *testing.T) {
+	outputDocumentVersion(t, "v1.19")
+}
+
+func outputDocumentVersion(t *testing.T, version string) {
+	spec, err := kubernetes.NewSpec("../../api/" + version + "/swagger.json")
 	if err != nil {
 		t.Errorf("Error loding swagger file")
 	}
 
-	toc, err := config.LoadTOC("../../config/v1.18/toc.yaml")
+	toc, err := config.LoadTOC("../../config/" + version + "/toc.yaml")
 	if err != nil {
 		t.Errorf("LoadTOC should not fail")
 	}
@@ -51,4 +59,5 @@ func TestOutputDocumentV118(t *testing.T) {
 	}
 	toc.Definitions = &spec.Swagger.Definitions
 	toc.OutputDocument(FakeOutput{})
+
 }
