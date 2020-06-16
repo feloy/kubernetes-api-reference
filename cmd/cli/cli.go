@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	fileOption      = "file"
-	configDirOption = "config-dir"
-	outputDirOption = "output-dir"
+	fileOption            = "file"
+	configDirOption       = "config-dir"
+	outputDirOption       = "output-dir"
+	showDefinitionsOption = "show-definitions"
 )
 
 // RootCmd defines the root cli command

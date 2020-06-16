@@ -87,6 +87,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 						newSection,
 					}
 					o.LinkEnds[chapter.Key.String()] = []string{part.Name, chapter.Name, newSection.Name}
+					o.DocumentedDefinitions[chapter.Key] = []string{chapter.Name}
 					continue
 				}
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
@@ -100,6 +101,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 					newSection,
 				}
 				o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
+				o.DocumentedDefinitions[kubernetes.Key(key.String()+"."+newSection.Name)] = []string{chapter.Name}
 			} else {
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
 			}
@@ -112,6 +114,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 					newSection := NewSection(resourceName, resource)
 					chapter.Sections = append(chapter.Sections, newSection)
 					o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
+					o.DocumentedDefinitions[kubernetes.Key(key.String()+"."+newSection.Name)] = []string{resourceName}
 				}
 			}
 		}
@@ -180,18 +183,31 @@ func (o *TOC) ToHugo(dir string) error {
 	hugo := hugo.NewHugo(dir)
 
 	o.OutputDocument(hugo)
-
-	o.outputDocumentedDefinitions()
 	return nil
 }
 
-func (o *TOC) outputDocumentedDefinitions() {
+// OutputDocumentedDefinitions outputs the list of definitions
+// and on which properties they are defined
+func (o *TOC) OutputDocumentedDefinitions() {
 	for k, v := range o.DocumentedDefinitions {
 		if len(v) != 1 {
 			fmt.Printf("%s:\n", k)
 			for _, s := range v {
 				fmt.Printf(" - %s\n", s)
 			}
+		}
+	}
+	for k, v := range o.DocumentedDefinitions {
+		if len(v) == 1 {
+			fmt.Printf("%s:\n", k)
+			for _, s := range v {
+				fmt.Printf(" - %s\n", s)
+			}
+		}
+	}
+	for k := range *o.Definitions {
+		if _, found := o.DocumentedDefinitions[kubernetes.Key(k)]; !found {
+			fmt.Printf("%s\n", k)
 		}
 	}
 }

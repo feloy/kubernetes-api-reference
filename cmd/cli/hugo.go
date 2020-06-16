@@ -21,13 +21,25 @@ func Hugo() *cobra.Command {
 			}
 
 			outputDir := cmd.Flag(outputDirOption).Value.String()
-			return toc.ToHugo(outputDir)
+			err = toc.ToHugo(outputDir)
+			if err != nil {
+				return err
+			}
+
+			show, err := cmd.Flags().GetBool(showDefinitionsOption)
+			if err != nil {
+				return err
+			}
+			if show {
+				toc.OutputDocumentedDefinitions()
+			}
+			return nil
 		},
 	}
 	cmd.Flags().StringP(configDirOption, "c", "", "Directory containing documentation configuration")
 	cmd.MarkFlagRequired(configDirOption)
 	cmd.Flags().StringP(outputDirOption, "o", "", "Directory to write markdown files")
 	cmd.MarkFlagRequired(outputDirOption)
-
+	cmd.Flags().Bool(showDefinitionsOption, false, "Show where definitions are defined on output")
 	return cmd
 }
