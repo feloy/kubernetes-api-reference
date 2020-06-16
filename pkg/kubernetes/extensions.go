@@ -1,6 +1,7 @@
 package kubernetes
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-openapi/spec"
@@ -63,4 +64,32 @@ func getGVKExtension(definition spec.Schema) (*GVKExtension, bool, error) {
 		Version: *apiversion,
 		Kind:    APIKind(kind),
 	}, true, nil
+}
+
+// GetPatchStrategyExtension returns the PatchStrategy extension of a definition, or nil if not found
+func GetPatchStrategyExtension(definition spec.Schema) (*string, error) {
+	extensions := definition.Extensions
+	extension, found := extensions["x-kubernetes-patch-strategy"]
+	if !found {
+		return nil, nil
+	}
+	value, ok := extension.(string)
+	if !ok {
+		return nil, errors.New("x-bubernetes-patch-strategy is not a string")
+	}
+	return &value, nil
+}
+
+// GetPatchMergeKeyExtension returns the GetPatchMergeKey extension of a definition, or nil if not found
+func GetPatchMergeKeyExtension(definition spec.Schema) (*string, error) {
+	extensions := definition.Extensions
+	extension, found := extensions["x-kubernetes-patch-merge-key"]
+	if !found {
+		return nil, nil
+	}
+	value, ok := extension.(string)
+	if !ok {
+		return nil, errors.New("x-bubernetes-patch-merge-key is not a string")
+	}
+	return &value, nil
 }

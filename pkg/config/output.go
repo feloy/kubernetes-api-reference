@@ -94,14 +94,17 @@ func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSec
 
 	for _, name := range ordered {
 		details := definition.Properties[name]
-		property := kubernetes.NewProperty(name, details, requiredProperties)
+		property, err := kubernetes.NewProperty(name, details, requiredProperties)
+		if err != nil {
+			return err
+		}
 		var linkend []string
 		if property.TypeKey != nil {
 			linkend = o.LinkEnds[*property.TypeKey]
 		}
 		completeName := prefix
 		completeName = append(completeName, name)
-		err := outputSection.AddProperty(strings.Join(completeName, "."), property, linkend, len(prefix) > 0)
+		err = outputSection.AddProperty(strings.Join(completeName, "."), property, linkend, len(prefix) > 0)
 		if err != nil {
 			return err
 		}

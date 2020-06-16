@@ -42,5 +42,18 @@ func (o Section) AddProperty(name string, property *kubernetes.Property, linkend
 		title = fmt.Sprintf("**%s** (%s%s)%s", name, property.Type, link, required)
 	}
 
-	return o.hugo.addListEntry(o.part.name, o.chapter.name, title, property.Description, indentLevel)
+	description := property.Description
+	var patches string
+	if property.MergeStrategyKey != nil && property.RetainKeysStrategy {
+		patches = fmt.Sprintf("Patch strategies: retainKeys, merge on key `%s`", *property.MergeStrategyKey)
+	} else if property.MergeStrategyKey != nil {
+		patches = fmt.Sprintf("Patch strategy: merge on key `%s`", *property.MergeStrategyKey)
+	} else if property.RetainKeysStrategy {
+		patches = "Patch strategy: retainKeys"
+	}
+
+	if len(patches) > 0 {
+		description = "*" + patches + "*\n" + description
+	}
+	return o.hugo.addListEntry(o.part.name, o.chapter.name, title, description, indentLevel)
 }

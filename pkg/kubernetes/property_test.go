@@ -123,7 +123,7 @@ func TestNewProperty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := NewProperty(test.Name, test.Details, test.Required)
+		result, _ := NewProperty(test.Name, test.Details, test.Required)
 		if !reflect.DeepEqual(test.Expected, result) {
 			t.Errorf("Should be %#v but is %#v", test.Expected, result)
 		}

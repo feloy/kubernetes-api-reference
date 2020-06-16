@@ -52,4 +52,3 @@ Kubernetes API extends OpenAPI using these extensions:
 ## TODO
 
 - additionalProperties: map[string]...
-- merge extensions on properties

@@ -9,25 +9,51 @@ import (
 
 // Property represents a property of a definition
 type Property struct {
-	Name        string
-	Type        string
-	TypeKey     *Key
-	Description string
-	Required    bool
+	Name               string
+	Type               string
+	TypeKey            *Key
+	Description        string
+	Required           bool
+	RetainKeysStrategy bool
+	MergeStrategyKey   *string
 }
 
 // NewProperty returns a new Property from its swagger definition
-func NewProperty(name string, details spec.Schema, required []string) *Property {
+func NewProperty(name string, details spec.Schema, required []string) (*Property, error) {
 	typ, key := getTypeNameAndKey(details)
+	strategy, err := GetPatchStrategyExtension(details)
+	if err != nil {
+		return nil, err
+	}
+	mergeKey, err := GetPatchMergeKeyExtension(details)
+	if err != nil {
+		return nil, err
+	}
+
+	var retainKeysStrategy bool
+	var mergeStrategyKey *string
+	if strategy != nil {
+		patchStrategies := strings.Split(*strategy, ",")
+		for _, patchStrategy := range patchStrategies {
+			if patchStrategy == "merge" {
+				mergeStrategyKey = mergeKey
+			} else if patchStrategy == "retainKeys" {
+				retainKeysStrategy = true
+			}
+		}
+	}
+
 	result := Property{
-		Name:        name,
-		Type:        typ,
-		TypeKey:     key,
-		Description: details.Description,
+		Name:               name,
+		Type:               typ,
+		TypeKey:            key,
+		Description:        details.Description,
+		RetainKeysStrategy: retainKeysStrategy,
+		MergeStrategyKey:   mergeStrategyKey,
 	}
 	result.Required = isRequired(name, required)
 
-	return &result
+	return &result, nil
 }
 
 // isRequired returns true if name appears in the required array

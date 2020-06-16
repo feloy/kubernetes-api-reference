@@ -15,7 +15,7 @@ func (o FakeOutput) AddPart(i int, name string) (outputs.Part, error) { return F
 
 type FakePart struct{}
 
-func (o FakePart) AddChapter(i int, name string, version *kubernetes.APIVersion) (outputs.Chapter, error) {
+func (o FakePart) AddChapter(i int, name string, version *kubernetes.APIVersion, description string) (outputs.Chapter, error) {
 	return FakeChapter{}, nil
 }
 
