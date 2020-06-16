@@ -43,7 +43,7 @@ func (o *TOC) OutputPart(i int, part *Part, output outputs.Output) error {
 
 // OutputChapter outputs a chapter of the part
 func (o *TOC) OutputChapter(i int, chapter *Chapter, outputPart outputs.Part) error {
-	outputChapter, err := outputPart.AddChapter(i, chapter.Name)
+	outputChapter, err := outputPart.AddChapter(i, chapter.Name, chapter.Version)
 	if err != nil {
 		return err
 	}

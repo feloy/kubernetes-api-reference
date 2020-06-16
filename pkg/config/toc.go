@@ -86,7 +86,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 					chapter.Sections = []*Section{
 						newSection,
 					}
-					o.LinkEnds[chapter.Key.String()] = []string{part.Name, chapter.Name, newSection.Name}
+					o.LinkEnds[chapter.Key.String()] = []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name}
 					o.DocumentedDefinitions[chapter.Key] = []string{chapter.Name}
 					continue
 				}
@@ -100,7 +100,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 				chapter.Sections = []*Section{
 					newSection,
 				}
-				o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
+				o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name}
 				o.DocumentedDefinitions[kubernetes.Key(key.String()+"."+newSection.Name)] = []string{chapter.Name}
 			} else {
 				return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
@@ -113,7 +113,7 @@ func (o *TOC) PopulateAssociates(spec *kubernetes.Spec) error {
 				if resource != nil {
 					newSection := NewSection(resourceName, resource)
 					chapter.Sections = append(chapter.Sections, newSection)
-					o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name, newSection.Name}
+					o.LinkEnds[key.String()+"."+newSection.Name] = []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name}
 					o.DocumentedDefinitions[kubernetes.Key(key.String()+"."+newSection.Name)] = []string{resourceName}
 				}
 			}

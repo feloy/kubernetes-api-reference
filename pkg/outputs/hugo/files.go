@@ -35,8 +35,8 @@ func (o *Hugo) addPart(name string) (string, error) {
 }
 
 // addChapter adds a chapter to the part
-func (o *Hugo) addChapter(partname string, name string, metadata map[string]interface{}) (string, error) {
-	chaptername := escapeName(name)
+func (o *Hugo) addChapter(partname string, name string, version string, metadata map[string]interface{}) (string, error) {
+	chaptername := escapeName(name + "-" + version)
 	filename := filepath.Join(o.Directory, partname, chaptername) + ".md"
 	f, err := os.Create(filename)
 	if err != nil {

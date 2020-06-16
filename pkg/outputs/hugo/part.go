@@ -3,6 +3,7 @@ package hugo
 import (
 	"fmt"
 
+	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 	"github.com/feloy/kubernetes-api-reference/pkg/outputs"
 )
 
@@ -14,9 +15,13 @@ type Part struct {
 }
 
 // AddChapter adds a chapter to the Part
-func (o Part) AddChapter(i int, name string) (outputs.Chapter, error) {
-	chaptername, err := o.hugo.addChapter(o.name, name, map[string]interface{}{
-		"title":       name,
+func (o Part) AddChapter(i int, name string, version *kubernetes.APIVersion) (outputs.Chapter, error) {
+	title := name
+	if version != nil && version.Stage != kubernetes.StageGA {
+		title += " " + version.String()
+	}
+	chaptername, err := o.hugo.addChapter(o.name, name, version.String(), map[string]interface{}{
+		"title":       title,
 		"draft":       false,
 		"collapsible": false,
 		"weight":      i + 1,
