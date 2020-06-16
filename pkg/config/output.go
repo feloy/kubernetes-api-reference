@@ -43,7 +43,11 @@ func (o *TOC) OutputPart(i int, part *Part, output outputs.Output) error {
 
 // OutputChapter outputs a chapter of the part
 func (o *TOC) OutputChapter(i int, chapter *Chapter, outputPart outputs.Part) error {
-	outputChapter, err := outputPart.AddChapter(i, chapter.Name, chapter.Version)
+	description := ""
+	if len(chapter.Sections) > 0 {
+		description = getEscapedFirstPhrase(chapter.Sections[0].Definition.Description)
+	}
+	outputChapter, err := outputPart.AddChapter(i, chapter.Name, chapter.Version, description)
 	if err != nil {
 		return err
 	}
