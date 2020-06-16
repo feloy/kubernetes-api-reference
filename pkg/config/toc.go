@@ -27,15 +27,6 @@ type Part struct {
 	Chapters []*Chapter `yaml:"chapters"`
 }
 
-// Chapter contains a definition of a main resource and its associated resources and definitions
-type Chapter struct {
-	Name     string                 `yaml:"name"`
-	Group    *kubernetes.APIGroup   `yaml:"group"`
-	Version  *kubernetes.APIVersion `yaml:"version"`
-	Key      kubernetes.Key         `yaml:"key"`
-	Sections []*Section
-}
-
 // Section contains a definition of a Kind for a given Group/Version
 type Section struct {
 	Name       string
@@ -79,80 +70,7 @@ func (o *TOC) PopulateAssociates(thespec *kubernetes.Spec) error {
 
 	for _, part := range o.Parts {
 		for _, chapter := range part.Chapters {
-			if len(chapter.Key.String()) > 0 {
-				main := thespec.GetDefinition(chapter.Key)
-				if main != nil {
-					newSection := NewSection(chapter.Name, main)
-					chapter.Sections = []*Section{
-						newSection,
-					}
-					o.LinkEnds.Add(chapter.Key, []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name})
-					o.DocumentedDefinitions[chapter.Key] = []string{chapter.Name}
-				} else {
-					return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
-				}
-
-				suffixes := []string{"Spec", "Status", "List"}
-				for _, suffix := range suffixes {
-					resourceName := chapter.Name + suffix
-					resourceKey := kubernetes.Key(chapter.Key.String() + suffix)
-					resource := thespec.GetDefinition(resourceKey)
-					if resource != nil {
-						newSection := NewSection(resourceName, resource)
-						chapter.Sections = append(chapter.Sections, newSection)
-						o.LinkEnds.Add(resourceKey, []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name})
-						o.DocumentedDefinitions[resourceKey] = []string{resourceName}
-					}
-				}
-			} else {
-				key, main := thespec.GetResource(*chapter.Group, *chapter.Version, kubernetes.APIKind(chapter.Name), true)
-				if main != nil {
-					chapter.Key = key
-					newSection := NewSection(chapter.Name, main)
-					chapter.Sections = []*Section{
-						newSection,
-					}
-					o.LinkEnds.Add(key, []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name})
-					o.DocumentedDefinitions[key] = []string{chapter.Name}
-				} else {
-					return fmt.Errorf("Resource %s/%s/%s not found in spec", chapter.Group, chapter.Version.String(), kubernetes.APIKind(chapter.Name))
-				}
-
-				suffixes := []string{"Spec", "Status"}
-				for _, suffix := range suffixes {
-					resourceName := chapter.Name + suffix
-					gvRes := kubernetes.Resource{
-						GVKExtension: kubernetes.GVKExtension{
-							Group:   *chapter.Group,
-							Version: *chapter.Version,
-						},
-					}
-					keys := thespec.GVToKey[gvRes.GetGV()]
-					for _, key := range keys {
-						resourceKey := kubernetes.Key(key + "." + chapter.Name + suffix)
-						resource := thespec.GetDefinition(resourceKey)
-						if resource != nil {
-							newSection := NewSection(resourceName, resource)
-							chapter.Sections = append(chapter.Sections, newSection)
-							o.LinkEnds.Add(kubernetes.Key(key), []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name})
-							o.DocumentedDefinitions[kubernetes.Key(key)] = []string{resourceName}
-						}
-					}
-				}
-
-				suffixes = []string{"List"}
-				for _, suffix := range suffixes {
-					resourceName := chapter.Name + suffix
-					key, resource := thespec.GetResource(*chapter.Group, *chapter.Version, kubernetes.APIKind(resourceName), true)
-					if resource != nil {
-						newSection := NewSection(resourceName, resource)
-						chapter.Sections = append(chapter.Sections, newSection)
-						o.LinkEnds.Add(key, []string{part.Name, chapter.Name + "-" + chapter.Version.String(), newSection.Name})
-						o.DocumentedDefinitions[key] = []string{resourceName}
-					}
-				}
-
-			}
+			chapter.populate(part, o, thespec)
 		}
 	}
 	return nil
