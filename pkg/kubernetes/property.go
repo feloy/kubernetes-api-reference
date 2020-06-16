@@ -70,6 +70,11 @@ func isRequired(name string, required []string) bool {
 // This is the api kind for definitions and the type for
 // primitive types.
 func getTypeNameAndKey(s spec.Schema) (string, *Key) {
+	if isMap(s) {
+		typ, key := getTypeNameAndKey(*s.AdditionalProperties.Schema)
+		return fmt.Sprintf("map[string]%s", typ), key
+	}
+
 	// Get the reference for complex types
 	if isDefinition(s) {
 		key := Key(strings.TrimPrefix(s.SchemaProps.Ref.GetPointer().String(), "/definitions/"))
@@ -84,7 +89,11 @@ func getTypeNameAndKey(s spec.Schema) (string, *Key) {
 
 	// Get the value for primitive types
 	if len(s.Type) > 0 {
-		return fmt.Sprintf("%s", s.Type[0]), nil
+		format := ""
+		if len(s.Format) > 0 {
+			format = fmt.Sprintf(": %s", s.Format)
+		}
+		return fmt.Sprintf("%s%s", s.Type[0], format), nil
 	}
 
 	panic(fmt.Errorf("No type found for object %v", s))
@@ -98,4 +107,8 @@ func isDefinition(s spec.Schema) bool {
 // isArray returns true if the type is an array type
 func isArray(s spec.Schema) bool {
 	return len(s.Type) > 0 && s.Type[0] == "array"
+}
+
+func isMap(s spec.Schema) bool {
+	return len(s.Type) > 0 && s.Type[0] == "object" && s.AdditionalProperties != nil
 }
