@@ -44,5 +44,4 @@ func (o Chapter) AddSection(i int, name string) (outputs.Section, error) {
 		part:    o.part,
 		chapter: &o,
 	}, nil
-
 }

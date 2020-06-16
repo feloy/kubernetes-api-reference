@@ -53,10 +53,10 @@ func (o *TOC) OutputChapter(i int, chapter *Chapter, outputPart outputs.Part) er
 		if err != nil {
 			return err
 		}
-		err = outputChapter.SetGoImport(chapter.Key.GoImportPrefix())
-		if err != nil {
-			return err
-		}
+	}
+	err = outputChapter.SetGoImport(chapter.Key.GoImportPrefix())
+	if err != nil {
+		return err
 	}
 
 	for s, tocSection := range chapter.Sections {
@@ -86,7 +86,7 @@ func (o *TOC) OutputSection(i int, section *Section, outputChapter outputs.Chapt
 func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSection outputs.Section, prefix []string) error {
 	requiredProperties := definition.Required
 
-	ordered := orderedPropertyKeys(definition.Properties)
+	ordered := orderedPropertyKeys(requiredProperties, definition.Properties)
 
 	for _, name := range ordered {
 		details := definition.Properties[name]
@@ -120,13 +120,24 @@ func (o *TOC) setDocumentedDefinition(key *kubernetes.Key, from string) {
 }
 
 // orderedPropertyKeys returns the keys of m alphabetically ordered
-func orderedPropertyKeys(m map[string]spec.Schema) []string {
-	keys := make([]string, len(m))
+func orderedPropertyKeys(required []string, m map[string]spec.Schema) []string {
+	sort.Strings(required)
+
+	keys := make([]string, len(m)-len(required))
 	i := 0
 	for k := range m {
-		keys[i] = k
-		i++
+		found := false
+		for _, r := range required {
+			if r == k {
+				found = true
+				break
+			}
+		}
+		if !found {
+			keys[i] = k
+			i++
+		}
 	}
 	sort.Strings(keys)
-	return keys
+	return append(required, keys...)
 }
