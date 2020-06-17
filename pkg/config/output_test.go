@@ -34,6 +34,14 @@ func (o FakeSection) AddProperty(name string, property *kubernetes.Property, lin
 	return nil
 }
 
+func TestOutputDocumentV116(t *testing.T) {
+	outputDocumentVersion(t, "v1.16")
+}
+
+func TestOutputDocumentV117(t *testing.T) {
+	outputDocumentVersion(t, "v1.17")
+}
+
 func TestOutputDocumentV118(t *testing.T) {
 	outputDocumentVersion(t, "v1.18")
 }
