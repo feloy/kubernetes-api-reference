@@ -16,7 +16,6 @@
 
 .firebase
 .firebaserc
-firebase.json
 
 /website/content/en/docs/
 /website/public

@@ -1,24 +1,44 @@
 steps:
 
-- id: test
-  name: golang:1.13-buster
+- id: build-image
+  name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'eu.gcr.io/$PROJECT_ID/build:$BUILD_ID', '.' ]
+
+- id: build
+  waitFor:
+  - build-image
+  name: 'eu.gcr.io/$PROJECT_ID/build:$BUILD_ID'
+  entrypoint: "/bin/bash"
   args:
-  - bash
   - -c
   - |
-    go test -v -covermode=count -coverprofile=profile.cov ./...
-    go get github.com/mattn/goveralls
-    goveralls -coverprofile=profile.cov -repotoken $_REPOTOKEN
+    kubernetes-api-reference hugo --file api/v1.18/swagger.json --config-dir config/v1.18 --output-dir website/content/en/docs
 
-#- id: build
-#  waitFor:
-#  - test
-#  name: gcr.io/cloud-builders/docker
-#  args:
-#  - build
-#  - -t
-#  - eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
-#  - .
-#
-#images:
-#- eu.gcr.io/$PROJECT_ID/kubernetes-api-reference
+- id: hugo
+  waitFor:
+  - build
+  name: 'klakegg/hugo'
+  entrypoint: "/bin/sh"
+  args:
+  - -c
+  - |
+    cd website
+    hugo --environment ${_HOSTING}
+    tar zcf public.tgz public
+
+- id: deploy
+  waitFor: ['hugo']
+  name: 'eu.gcr.io/$PROJECT_ID/firebase'
+  args: 
+  - 'deploy'
+  - '-P'
+  - '$PROJECT_ID'
+  - '--only'
+  - 'hosting:${_HOSTING}'
+  dir: website
+
+artifacts:
+  objects:
+    location: 'gs://$PROJECT_ID/${BRANCH_NAME}${TAG_NAME}/'
+    paths:
+    - "website/public.tgz"
