@@ -12,7 +12,8 @@ steps:
   args:
   - -c
   - |
-    kubernetes-api-reference hugo --file api/v1.18/swagger.json --config-dir config/v1.18 --output-dir website/content/en/docs
+    mkdir -p website/content/en/docs
+    kubernetes-api-reference hugo --file api/v1.19/swagger.json --config-dir config/v1.19 --output-dir website/content/en/docs
 
 - id: hugo
   waitFor:

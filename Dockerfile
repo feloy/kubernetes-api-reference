@@ -15,14 +15,15 @@ ADD cmd /app/cmd
 RUN go test ./...
 
 # Build binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o /kubernetes-api-reference cmd/main.go
+RUN GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o /kubernetes-api-reference cmd/main.go
 
 # Verify that resourceslist.txt is up to date
 RUN /kubernetes-api-reference resourceslist -f api/v1.18/swagger.json > /tmp/resourceslist.txt
 RUN diff /tmp/resourceslist.txt api/v1.18/resourceslist.txt
 
 # final stage
-FROM alpine:latest
-COPY --from=builder /kubernetes-api-reference ./
-RUN chmod +x ./kubernetes-api-reference
-ENTRYPOINT ["./kubernetes-api-reference"]
+FROM eu.gcr.io/k8sref-io/docbook
+
+WORKDIR /root
+
+COPY --from=builder /kubernetes-api-reference /usr/local/bin/
