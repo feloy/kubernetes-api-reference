@@ -8,6 +8,7 @@ import (
 	"sort"
 
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
+	"github.com/feloy/kubernetes-api-reference/pkg/outputs/docbook"
 	"github.com/feloy/kubernetes-api-reference/pkg/outputs/hugo"
 	"github.com/go-openapi/spec"
 	"gopkg.in/yaml.v2"
@@ -140,6 +141,13 @@ func (o *TOC) ToHugo(dir string) error {
 	hugo := hugo.NewHugo(dir)
 
 	o.OutputDocument(hugo)
+	return nil
+}
+
+// ToDocbook outputs documentation in Docbook format
+func (o *TOC) ToDocbook(w io.Writer) error {
+	docbook := docbook.NewDocbook()
+	o.OutputDocument(docbook)
 	return nil
 }
 

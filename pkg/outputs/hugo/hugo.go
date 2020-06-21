@@ -48,3 +48,8 @@ func (o *Hugo) AddPart(i int, name string) (outputs.Part, error) {
 		name: partname,
 	}, nil
 }
+
+// Terminate hugo document
+func (o *Hugo) Terminate() error {
+	return nil
+}

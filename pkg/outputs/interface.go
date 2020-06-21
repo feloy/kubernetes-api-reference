@@ -8,6 +8,7 @@ import (
 type Output interface {
 	Prepare() error
 	AddPart(i int, name string) (Part, error)
+	Terminate() error
 }
 
 // Part is an interface to a part of an output
@@ -25,5 +26,8 @@ type Chapter interface {
 // Section is an interface to a section of an output
 type Section interface {
 	AddContent(s string) error
+	StartPropertyList() error
 	AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error
+	EndProperty() error
+	EndPropertyList() error
 }

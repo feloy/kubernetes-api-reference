@@ -22,6 +22,11 @@ func (o *TOC) OutputDocument(output outputs.Output) error {
 			return err
 		}
 	}
+
+	err = output.Terminate()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -83,7 +88,14 @@ func (o *TOC) OutputSection(i int, section *Section, outputChapter outputs.Chapt
 		return err
 	}
 
-	return o.OutputProperties(section.Name, section.Definition, outputSection, []string{})
+	outputSection.StartPropertyList()
+
+	err = o.OutputProperties(section.Name, section.Definition, outputSection, []string{})
+	if err != nil {
+		return err
+	}
+
+	return outputSection.EndPropertyList()
 }
 
 // OutputProperties outputs the properties of a definition
@@ -111,8 +123,22 @@ func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSec
 		if property.TypeKey != nil && len(linkend) == 0 {
 			if target, found := (*o.Definitions)[property.TypeKey.String()]; found {
 				o.setDocumentedDefinition(property.TypeKey, defname+"/"+strings.Join(completeName, "."))
+				sublist := false
+				if len(prefix) == 0 {
+					sublist = true
+					outputSection.StartPropertyList()
+				} else {
+					err = outputSection.EndProperty()
+				}
 				o.OutputProperties(defname, target, outputSection, append(prefix, name))
+				if sublist {
+					outputSection.EndPropertyList()
+				}
 			}
+		}
+		err = outputSection.EndProperty()
+		if err != nil {
+			return err
 		}
 	}
 	return nil

@@ -19,6 +19,11 @@ func (o Section) AddContent(s string) error {
 	return o.hugo.addContent(o.part.name, o.chapter.name, s)
 }
 
+// StartPropertyList starts the list of properties
+func (o Section) StartPropertyList() error {
+	return nil
+}
+
 // AddProperty adds a property to the section
 func (o Section) AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error {
 	indentLevel := 0
@@ -56,4 +61,14 @@ func (o Section) AddProperty(name string, property *kubernetes.Property, linkend
 		description = "*" + patches + "*\n" + description
 	}
 	return o.hugo.addListEntry(o.part.name, o.chapter.name, title, description, indentLevel)
+}
+
+// EndProperty ends a property
+func (o Section) EndProperty() error {
+	return nil
+}
+
+// EndPropertyList ends the list of properties
+func (o Section) EndPropertyList() error {
+	return nil
 }

@@ -12,6 +12,7 @@ type FakeOutput struct{}
 
 func (o FakeOutput) Prepare() error                                   { return nil }
 func (o FakeOutput) AddPart(i int, name string) (outputs.Part, error) { return FakePart{}, nil }
+func (o FakeOutput) Terminate() error                                 { return nil }
 
 type FakePart struct{}
 
@@ -33,6 +34,9 @@ func (o FakeSection) AddContent(s string) error { return nil }
 func (o FakeSection) AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error {
 	return nil
 }
+func (o FakeSection) EndProperty() error       { return nil }
+func (o FakeSection) StartPropertyList() error { return nil }
+func (o FakeSection) EndPropertyList() error   { return nil }
 
 func TestOutputDocumentV116(t *testing.T) {
 	outputDocumentVersion(t, "v1.16")

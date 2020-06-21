@@ -35,10 +35,12 @@ func RootCmd() *cobra.Command {
 	cmd.PersistentFlags().StringP(fileOption, "f", "", "OpenAPI spec file")
 	cmd.MarkFlagRequired(fileOption)
 
-	cmd.AddCommand(ResourceslistCmd())
-	cmd.AddCommand(ShowTOCCmd())
-	cmd.AddCommand(GVKeysMap())
-	cmd.AddCommand(Hugo())
+	subcommands := []func() *cobra.Command{
+		ResourceslistCmd, ShowTOCCmd, GVKeysMap, Hugo, Docbook,
+	}
+	for _, subcommand := range subcommands {
+		cmd.AddCommand(subcommand())
+	}
 
 	cobra.OnInitialize(initConfig)
 
