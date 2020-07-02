@@ -21,6 +21,17 @@ func (o DocbookSection) AddContent(s string) error {
 	return nil
 }
 
+// AddTypeDefinition adds the definition of a type to the output
+func (o DocbookSection) AddTypeDefinition(s string) error {
+	for _, part := range strings.Split(s, "\n") {
+		o.w.StartElem(x.Elem{Name: "para"})
+		o.w.StartElem(dbxml.ElemWithText("emphasis", part))
+		o.w.EndElem("emphasis")
+		o.w.EndElem("para")
+	}
+	return nil
+}
+
 // StartPropertyList starts the list of properties
 func (o DocbookSection) StartPropertyList() error {
 	return o.w.StartElem(x.Elem{Name: "variablelist"})

@@ -10,6 +10,11 @@ func Code(s string) string {
 	return fmt.Sprintf("`%s`", s)
 }
 
+// Italic returns text s in italic
+func Italic(s string) string {
+	return fmt.Sprintf("*%s*", s)
+}
+
 // Chapter returns a Level 2 mark
 func Chapter(name string) string {
 	return fmt.Sprintf("## %s\n", name)

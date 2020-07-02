@@ -216,24 +216,14 @@ parts:
     key: io.k8s.api.core.v1.ExecAction
   - name: HTTPGetAction
     key: io.k8s.api.core.v1.HTTPGetAction
-  - name: IntOrString
-    key: "io.k8s.apimachinery.pkg.util.intstr.IntOrString"
-  - name: JSON
-    key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSON
   - name: JSONSchemaProps
     key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps
-  - name: JSONSchemaPropsOrArray
-    key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrArray
-  - name: JSONSchemaPropsOrBool
-    key: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrBool
   - name: LabelSelector
     key: io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
   - name: ListMeta
     key: io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta
   - name: LocalObjectReference
     key: io.k8s.api.core.v1.LocalObjectReference
-  - name: MicroTime
-    key: io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
   - name: NodeAffinity
     key: io.k8s.api.core.v1.NodeAffinity
   - name: NodeSelectorRequirement
@@ -254,7 +244,5 @@ parts:
     key: io.k8s.api.core.v1.ResourceFieldSelector
   - name: TCPSocketAction
     key: io.k8s.api.core.v1.TCPSocketAction
-  - name: Time
-    key: io.k8s.apimachinery.pkg.apis.meta.v1.Time
   - name: TypedLocalObjectReference
     key: io.k8s.api.core.v1.TypedLocalObjectReference

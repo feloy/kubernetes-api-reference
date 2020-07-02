@@ -3,6 +3,7 @@ package hugo
 import (
 	"fmt"
 
+	"github.com/feloy/kubernetes-api-reference/pkg/formats/markdown"
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
 )
 
@@ -17,6 +18,11 @@ type Section struct {
 // AddContent adds content to a section
 func (o Section) AddContent(s string) error {
 	return o.hugo.addContent(o.part.name, o.chapter.name, s)
+}
+
+// AddTypeDefinition adds the definition of a type to a section
+func (o Section) AddTypeDefinition(s string) error {
+	return o.hugo.addContent(o.part.name, o.chapter.name, markdown.Italic(s))
 }
 
 // StartPropertyList starts the list of properties

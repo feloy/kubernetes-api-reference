@@ -121,8 +121,15 @@ func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSec
 			return err
 		}
 		if property.TypeKey != nil && len(linkend) == 0 {
+			// The type is documented inline
 			if target, found := (*o.Definitions)[property.TypeKey.String()]; found {
 				o.setDocumentedDefinition(property.TypeKey, defname+"/"+strings.Join(completeName, "."))
+
+				err = outputSection.AddTypeDefinition(target.Description)
+				if err != nil {
+					return err
+				}
+
 				sublist := false
 				if len(prefix) == 0 {
 					sublist = true
@@ -130,6 +137,7 @@ func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSec
 				} else {
 					err = outputSection.EndProperty()
 				}
+
 				o.OutputProperties(defname, target, outputSection, append(prefix, name))
 				if sublist {
 					outputSection.EndPropertyList()

@@ -12,21 +12,22 @@
 ![security](https://sonarcloud.io/api/project_badges/measure?project=feloy_kubernetes-api-reference&metric=security_rating)
 ![quality gate](https://sonarcloud.io/api/project_badges/measure?project=feloy_kubernetes-api-reference&metric=alert_status)
 
-
 Tool to create documentation of the Kubernetes API.
 
 ## Usage
 
-```go
-$ go build cmd/main.go
-$ ./main hugo \
-  --file api/v1.18/swagger.json \
-  --config-dir config/v1.18/ \
-  --output-dir website/content/en/docs/
-$ cd website
-$ hugo
-$ cd public
-$ python -m http.server
+### Web output
+
+```sh
+make website
+make serve
+```
+
+### PDF output
+
+```sh
+make pdf FORMAT=A4
+make pdf FORMAT=USletter
 ```
 
 ## OpenAPI specification
