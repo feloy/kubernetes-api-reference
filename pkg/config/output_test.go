@@ -30,7 +30,8 @@ func (o FakeChapter) AddSection(i int, name string) (outputs.Section, error) {
 
 type FakeSection struct{}
 
-func (o FakeSection) AddContent(s string) error { return nil }
+func (o FakeSection) AddContent(s string) error        { return nil }
+func (o FakeSection) AddTypeDefinition(s string) error { return nil }
 func (o FakeSection) AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error {
 	return nil
 }
