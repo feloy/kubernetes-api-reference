@@ -49,3 +49,6 @@ Kubernetes API extends OpenAPI using these extensions:
 - `x-kubernetes-action`: OpenAPI Operations (get, post, etc) are mapped to Kubernetes API *actions* (get, list, watch, etc) with this extension.
 - `x-kubernetes-patch-strategy`: a comma-separated list of strategic merge patch strategies supported by a field of a Kubernetes resource.
 - `x-kubernetes-patch-merge-key`: when a field supports the `merge` strategy, this extension indicates the key used to identify the fields to merge.
+- `x-kubernetes-list-type`: atomic, map, set. Applicable to lists. atomic and set apply to lists with scalar elements only. map applies to lists of nested types only. If configured as atomic, the entire list is replaced during merge; a single manager manages the list as a whole at any one time. If granular, different managers can manage entries separately.
+- `x-kubernetes-list-map-keys`: Only applicable when x-kubernetes-list-type=map. A slice of strings whose values in combination must uniquely identify list entries.
+- `x-kubernetes-unions`

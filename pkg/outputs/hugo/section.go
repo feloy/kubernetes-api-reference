@@ -2,6 +2,7 @@ package hugo
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/feloy/kubernetes-api-reference/pkg/formats/markdown"
 	"github.com/feloy/kubernetes-api-reference/pkg/kubernetes"
@@ -54,6 +55,25 @@ func (o Section) AddProperty(name string, property *kubernetes.Property, linkend
 	}
 
 	description := property.Description
+
+	listType := ""
+	if property.ListType != nil {
+		if *property.ListType == "atomic" {
+			listType = "Atomic: will be replaced during a merge"
+		} else if *property.ListType == "set" {
+			listType = "Set: unique values will be kept during a merge"
+		} else if *property.ListType == "map" {
+			if len(property.ListMapKeys) == 1 {
+				listType = "Map: unique values on key " + property.ListMapKeys[0] + " will be kept during a merge"
+			} else {
+				listType = "Map: unique values on keys `" + strings.Join(property.ListMapKeys, ", ") + "` will be kept during a merge"
+			}
+		}
+	}
+	if len(listType) > 0 {
+		description = "*" + listType + "*\n" + description
+	}
+
 	var patches string
 	if property.MergeStrategyKey != nil && property.RetainKeysStrategy {
 		patches = fmt.Sprintf("Patch strategies: retainKeys, merge on key `%s`", *property.MergeStrategyKey)

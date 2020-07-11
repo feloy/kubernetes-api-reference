@@ -77,6 +77,35 @@ func (o DocbookSection) AddProperty(name string, property *kubernetes.Property, 
 		o.w.EndElem("para")
 	}
 
+	var listType []x.Writable
+	if property.ListType != nil {
+		if *property.ListType == "atomic" {
+			listType = []x.Writable{x.Text("Atomic: will be replaced during a merge")}
+		} else if *property.ListType == "set" {
+			listType = []x.Writable{x.Text("Set: unique values will be kept during a merge")}
+		} else if *property.ListType == "map" {
+			if len(property.ListMapKeys) == 1 {
+				listType = []x.Writable{
+					x.Text("Map: unique values on key "),
+					dbxml.ElemWithText("varname", property.ListMapKeys[0]),
+					x.Text(" will be kept during a merge"),
+				}
+			} else {
+				listType = []x.Writable{
+					x.Text("Map: unique values on keys "),
+					dbxml.ElemWithText("varname", strings.Join(property.ListMapKeys, ", ")),
+					x.Text(" will be kept during a merge"),
+				}
+			}
+		}
+	}
+	if len(listType) > 0 {
+		o.w.StartElem(x.Elem{Name: "para"})
+		o.w.StartElem(dbxml.ElemWithContent("emphasis", listType))
+		o.w.EndElem("emphasis")
+		o.w.EndElem("para")
+	}
+
 	parts := strings.Split(property.Description, "\n")
 	for _, part := range parts {
 		o.w.StartElem(dbxml.ElemWithText("para", part))

@@ -16,6 +16,8 @@ type Property struct {
 	Required           bool
 	RetainKeysStrategy bool
 	MergeStrategyKey   *string
+	ListType           *string
+	ListMapKeys        []string
 }
 
 // NewProperty returns a new Property from its swagger definition
@@ -43,6 +45,18 @@ func NewProperty(name string, details spec.Schema, required []string) (*Property
 		}
 	}
 
+	listType, err := GetListType(details)
+	if err != nil {
+		return nil, err
+	}
+	var listMapKeys []string
+	if listType != nil && *listType == "map" {
+		listMapKeys, err = GetListMapKeys(details)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	result := Property{
 		Name:               name,
 		Type:               typ,
@@ -50,6 +64,8 @@ func NewProperty(name string, details spec.Schema, required []string) (*Property
 		Description:        details.Description,
 		RetainKeysStrategy: retainKeysStrategy,
 		MergeStrategyKey:   mergeStrategyKey,
+		ListType:           listType,
+		ListMapKeys:        listMapKeys,
 	}
 	result.Required = isRequired(name, required)
 

@@ -93,3 +93,39 @@ func GetPatchMergeKeyExtension(definition spec.Schema) (*string, error) {
 	}
 	return &value, nil
 }
+
+// GetListType returns the ListType extension of a definition, or nil if not found
+func GetListType(definition spec.Schema) (*string, error) {
+	extensions := definition.Extensions
+	extension, found := extensions["x-kubernetes-list-type"]
+	if !found {
+		return nil, nil
+	}
+	value, ok := extension.(string)
+	if !ok {
+		return nil, errors.New("x-bubernetes-list-type is not a string")
+	}
+	return &value, nil
+}
+
+// GetListMapKeys returns the ListMapKeys extension of a definition, or nil if not found
+func GetListMapKeys(definition spec.Schema) ([]string, error) {
+	extensions := definition.Extensions
+	extension, found := extensions["x-kubernetes-list-map-keys"]
+	if !found {
+		return nil, nil
+	}
+	value, ok := extension.([]interface{})
+	if !ok {
+		return nil, errors.New("x-bubernetes-list-map-keys is not an array")
+	}
+	var result []string
+	for _, val := range value {
+		v, ok := val.(string)
+		if !ok {
+			return nil, errors.New("x-bubernetes-list-map-keys value is not a string")
+		}
+		result = append(result, v)
+	}
+	return result, nil
+}
