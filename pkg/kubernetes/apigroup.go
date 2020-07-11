@@ -19,5 +19,10 @@ func (o APIGroup) Replaces(p APIGroup) bool {
 		return true
 	}
 
+	// autoscaling replaces apps
+	if o.String() == "autoscaling" && p.String() == "apps" {
+		return true
+	}
+
 	return false
 }

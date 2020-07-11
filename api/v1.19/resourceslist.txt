@@ -89,11 +89,13 @@ Endpoints
 EndpointsList
 	v1
 Event
-	v1
+	events.k8s.io/v1
 	events.k8s.io/v1beta1
+	v1
 EventList
-	v1
+	events.k8s.io/v1
 	events.k8s.io/v1beta1
+	v1
 Eviction
 	policy/v1beta1
 FlowSchema
@@ -109,13 +111,17 @@ HorizontalPodAutoscalerList
 	autoscaling/v2beta1
 	autoscaling/v1
 Ingress
+	networking.k8s.io/v1
 	networking.k8s.io/v1beta1
 	extensions/v1beta1
 IngressClass
+	networking.k8s.io/v1
 	networking.k8s.io/v1beta1
 IngressClassList
+	networking.k8s.io/v1
 	networking.k8s.io/v1beta1
 IngressList
+	networking.k8s.io/v1
 	networking.k8s.io/v1beta1
 	extensions/v1beta1
 Job

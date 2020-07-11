@@ -104,11 +104,11 @@ Endpoints
 EndpointsList
 	v1
 Event
-	v1
 	events.k8s.io/v1beta1
+	v1
 EventList
-	v1
 	events.k8s.io/v1beta1
+	v1
 Eviction
 	policy/v1beta1
 HorizontalPodAutoscaler

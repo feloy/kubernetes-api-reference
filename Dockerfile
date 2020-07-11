@@ -18,8 +18,8 @@ RUN go test ./...
 RUN GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o /kubernetes-api-reference cmd/main.go
 
 # Verify that resourceslist.txt is up to date
-RUN /kubernetes-api-reference resourceslist -f api/v1.18/swagger.json > /tmp/resourceslist.txt
-RUN diff /tmp/resourceslist.txt api/v1.18/resourceslist.txt
+RUN /kubernetes-api-reference resourceslist -f api/v1.19/swagger.json > /tmp/resourceslist.txt
+RUN diff /tmp/resourceslist.txt api/v1.19/resourceslist.txt
 
 # final stage
 FROM eu.gcr.io/k8sref-io/docbook

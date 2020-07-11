@@ -21,7 +21,7 @@ type Resource struct {
 
 // LessThan returns true if 'o' is a newer version than 'p'
 func (o *Resource) LessThan(p *Resource) bool {
-	return o.Group.Replaces(p.Group) || p.Version.LessThan(&o.Version)
+	return o.Group.Replaces(p.Group) || (o.Group == p.Group && p.Version.LessThan(&o.Version))
 }
 
 // Replaces returns true if 'o' replaces 'p'
