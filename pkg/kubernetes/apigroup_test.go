@@ -13,7 +13,7 @@ func TestAPIGroupReplaces(t *testing.T) {
 		Expected bool
 	}{
 		{"networking", "extensions", true},
-		{"", "events.k8s.io", true},
+		{"events.k8s.io", "", true},
 	}
 
 	for _, test := range tests {

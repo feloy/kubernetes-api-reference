@@ -68,7 +68,7 @@ func TestResourceLessThan(t *testing.T) {
 					Version: *v1,
 				},
 			},
-			Expected: true,
+			Expected: false,
 		},
 		// Ingress resource in v1.18
 		{

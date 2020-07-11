@@ -78,10 +78,10 @@ parts:
     version: v1beta1
   - name: Ingress
     group: networking.k8s.io
-    version: v1beta1
+    version: v1
   - name: IngressClass
     group: networking.k8s.io
-    version: v1beta1
+    version: v1
 - name: Config and Storage
   chapters:
   - name: ConfigMap
@@ -186,11 +186,11 @@ parts:
   - name: Namespace
     group: ""
     version: v1
-  - name: Event
-    group: ""
-    version: v1
   - name: ComponentStatus
     group: ""
+    version: v1
+  - name: Event
+    group: events.k8s.io
     version: v1
   - name: APIService
     group: apiregistration.k8s.io

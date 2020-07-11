@@ -14,8 +14,8 @@ func (o APIGroup) Replaces(p APIGroup) bool {
 		return true
 	}
 
-	// core replaces events
-	if o.String() == "" && p.String() == "events.k8s.io" {
+	// events replaces core
+	if o.String() == "events.k8s.io" && p.String() == "" {
 		return true
 	}
 
