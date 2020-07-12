@@ -39,6 +39,18 @@ func (o DocbookSection) StartPropertyList() error {
 
 // AddProperty adds a property to the list of properties
 func (o DocbookSection) AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error {
+	if property.HardCodedValue != nil {
+		o.w.StartElem(x.Elem{Name: "varlistentry"})
+		o.w.StartElem(x.Elem{Name: "term"})
+		o.w.StartElem(dbxml.ElemWithText("varname", name+": "+*property.HardCodedValue))
+		o.w.EndElem("varname")
+		o.w.EndElem("term")
+		o.w.StartElem(x.Elem{Name: "listitem"})
+		o.w.EndElem("listitem")
+		o.w.EndElem("varlistentry")
+		return nil
+	}
+
 	o.w.StartElem(x.Elem{Name: "varlistentry"})
 	o.w.StartElem(x.Elem{Name: "term"})
 	o.w.StartElem(dbxml.ElemWithText("varname", name))

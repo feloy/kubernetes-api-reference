@@ -18,6 +18,15 @@ type Property struct {
 	MergeStrategyKey   *string
 	ListType           *string
 	ListMapKeys        []string
+	HardCodedValue     *string
+}
+
+// NewHardCodedValueProperty returns a property with an hardcoded value (useful for apiVersion, Kind)
+func NewHardCodedValueProperty(name string, value string) *Property {
+	return &Property{
+		Name:           name,
+		HardCodedValue: &value,
+	}
 }
 
 // NewProperty returns a new Property from its swagger definition

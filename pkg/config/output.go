@@ -90,7 +90,7 @@ func (o *TOC) OutputSection(i int, section *Section, outputChapter outputs.Chapt
 
 	outputSection.StartPropertyList()
 
-	err = o.OutputProperties(section.Name, section.Definition, outputSection, []string{})
+	err = o.OutputProperties(section.Name, section.Definition, outputSection, []string{}, section.APIVersion)
 	if err != nil {
 		return err
 	}
@@ -99,12 +99,26 @@ func (o *TOC) OutputSection(i int, section *Section, outputChapter outputs.Chapt
 }
 
 // OutputProperties outputs the properties of a definition
-func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSection outputs.Section, prefix []string) error {
+func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSection outputs.Section, prefix []string, apiVersion *string) error {
 	requiredProperties := definition.Required
-
-	ordered := orderedPropertyKeys(requiredProperties, definition.Properties)
+	ordered := orderedPropertyKeys(requiredProperties, definition.Properties, apiVersion != nil)
 
 	for _, name := range ordered {
+
+		if apiVersion != nil && (name == "apiVersion" || name == "kind") {
+			var property *kubernetes.Property
+			if name == "apiVersion" {
+				property = kubernetes.NewHardCodedValueProperty(name, *apiVersion)
+			} else if name == "kind" {
+				property = kubernetes.NewHardCodedValueProperty(name, defname)
+			}
+			err := outputSection.AddProperty(name, property, []string{}, false)
+			if err != nil {
+				return err
+			}
+			continue
+		}
+
 		details := definition.Properties[name]
 		property, err := kubernetes.NewProperty(name, details, requiredProperties)
 		if err != nil {
@@ -138,7 +152,7 @@ func (o *TOC) OutputProperties(defname string, definition spec.Schema, outputSec
 					err = outputSection.EndProperty()
 				}
 
-				o.OutputProperties(defname, target, outputSection, append(prefix, name))
+				o.OutputProperties(defname, target, outputSection, append(prefix, name), nil)
 				if sublist {
 					outputSection.EndPropertyList()
 				}
@@ -161,24 +175,42 @@ func (o *TOC) setDocumentedDefinition(key *kubernetes.Key, from string) {
 }
 
 // orderedPropertyKeys returns the keys of m alphabetically ordered
-func orderedPropertyKeys(required []string, m map[string]spec.Schema) []string {
+// keys in required will be placed first
+func orderedPropertyKeys(required []string, m map[string]spec.Schema, isResource bool) []string {
 	sort.Strings(required)
+
+	if isResource {
+		mkeys := make(map[string]struct{})
+		for k := range m {
+			mkeys[k] = struct{}{}
+		}
+		for _, special := range []string{"metadata", "kind", "apiVersion"} {
+			if !isRequired(special, required) {
+				if _, ok := mkeys[special]; ok {
+					required = append([]string{special}, required...)
+				}
+			}
+		}
+	}
 
 	keys := make([]string, len(m)-len(required))
 	i := 0
 	for k := range m {
-		found := false
-		for _, r := range required {
-			if r == k {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if !isRequired(k, required) {
 			keys[i] = k
 			i++
 		}
 	}
 	sort.Strings(keys)
 	return append(required, keys...)
+}
+
+// isRequired returns true if k is in the required array
+func isRequired(k string, required []string) bool {
+	for _, r := range required {
+		if r == k {
+			return true
+		}
+	}
+	return false
 }

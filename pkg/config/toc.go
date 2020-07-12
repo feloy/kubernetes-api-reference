@@ -31,13 +31,15 @@ type Part struct {
 // Section contains a definition of a Kind for a given Group/Version
 type Section struct {
 	Name       string
+	APIVersion *string
 	Definition spec.Schema
 }
 
 // NewSection returns a Section
-func NewSection(name string, definition *spec.Schema) *Section {
+func NewSection(name string, definition *spec.Schema, apiVersion *string) *Section {
 	return &Section{
 		Name:       name,
+		APIVersion: apiVersion,
 		Definition: *definition,
 	}
 }

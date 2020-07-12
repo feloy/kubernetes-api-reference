@@ -33,6 +33,10 @@ func (o Section) StartPropertyList() error {
 
 // AddProperty adds a property to the section
 func (o Section) AddProperty(name string, property *kubernetes.Property, linkend []string, indent bool) error {
+	if property.HardCodedValue != nil {
+		return o.hugo.addListEntry(o.part.name, o.chapter.name, "**"+name+"**: "+*property.HardCodedValue, "", 0)
+	}
+
 	indentLevel := 0
 	if indent {
 		indentLevel++

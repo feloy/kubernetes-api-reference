@@ -33,7 +33,12 @@ func (o *Chapter) populate(part *Part, toc *TOC, thespec *kubernetes.Spec) error
 		}
 	}
 
-	newSection := NewSection(o.Name, main)
+	var apiVersion *string
+	if o.Group != nil && o.Version != nil {
+		a := GetGV(*o.Group, *o.Version)
+		apiVersion = &a
+	}
+	newSection := NewSection(o.Name, main, apiVersion)
 	o.Sections = []*Section{
 		newSection,
 	}
@@ -42,7 +47,7 @@ func (o *Chapter) populate(part *Part, toc *TOC, thespec *kubernetes.Spec) error
 
 	if o.isResource() {
 		o.searchDefinitionsFromResource([]string{"Spec", "Status"}, part, toc, thespec)
-		o.searchResourcesFromResource([]string{"List"}, part, toc, thespec)
+		o.searchResourcesFromResource([]string{"List"}, part, toc, thespec, apiVersion)
 	} else {
 		o.searchDefinitionsFromDefinition([]string{"Status"}, part, toc, thespec)
 	}
@@ -66,12 +71,12 @@ func (o *Chapter) searchDefinitionsFromResource(suffixes []string, part *Part, t
 	}
 }
 
-func (o *Chapter) searchResourcesFromResource(suffixes []string, part *Part, toc *TOC, thespec *kubernetes.Spec) {
+func (o *Chapter) searchResourcesFromResource(suffixes []string, part *Part, toc *TOC, thespec *kubernetes.Spec, apiVersion *string) {
 	for _, suffix := range suffixes {
 		resourceName := o.Name + suffix
 		key, resource := thespec.GetResource(*o.Group, *o.Version, kubernetes.APIKind(resourceName), true)
 		if resource != nil {
-			newSection := NewSection(resourceName, resource)
+			newSection := NewSection(resourceName, resource, apiVersion)
 			o.Sections = append(o.Sections, newSection)
 			toc.LinkEnds.Add(key, []string{part.Name, o.Name + "-" + o.Version.String(), newSection.Name})
 			toc.DocumentedDefinitions[key] = []string{resourceName}
@@ -90,7 +95,7 @@ func (o *Chapter) searchDefinitionsFromDefinition(suffixes []string, part *Part,
 func (o *Chapter) addDefinition(resourceName string, resourceKey kubernetes.Key, part *Part, toc *TOC, thespec *kubernetes.Spec) {
 	resource := thespec.GetDefinition(resourceKey)
 	if resource != nil {
-		newSection := NewSection(resourceName, resource)
+		newSection := NewSection(resourceName, resource, nil)
 		o.Sections = append(o.Sections, newSection)
 		toc.LinkEnds.Add(resourceKey, []string{part.Name, o.Name + "-" + o.Version.String(), newSection.Name})
 		toc.DocumentedDefinitions[resourceKey] = []string{resourceName}
