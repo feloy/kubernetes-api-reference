@@ -91,7 +91,7 @@ func isRequired(name string, required []string) bool {
 	return false
 }
 
-// getTypeName returns the display name of a Schema.
+// getTypeNameAndKey returns the display name of a Schema.
 // This is the api kind for definitions and the type for
 // primitive types.
 func getTypeNameAndKey(s spec.Schema) (string, *Key) {
@@ -114,11 +114,14 @@ func getTypeNameAndKey(s spec.Schema) (string, *Key) {
 
 	// Get the value for primitive types
 	if len(s.Type) > 0 {
-		format := ""
+		value := s.Type[0]
 		if len(s.Format) > 0 {
-			format = fmt.Sprintf(": %s", s.Format)
+			value = s.Format
+			if value == "byte" {
+				value = "[]byte"
+			}
 		}
-		return fmt.Sprintf("%s%s", s.Type[0], format), nil
+		return value, nil
 	}
 
 	panic(fmt.Errorf("No type found for object %v", s))
